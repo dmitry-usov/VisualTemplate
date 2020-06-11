@@ -33,6 +33,7 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.ctx_treeView = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctx_copyPath = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageListForTree = new System.Windows.Forms.ImageList(this.components);
             this.dataGridProps = new System.Windows.Forms.DataGridView();
             this.bt_Open = new System.Windows.Forms.Button();
             this.bt_Save = new System.Windows.Forms.Button();
@@ -54,11 +55,17 @@
             this.bt_reloadTr = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.imageListForTree = new System.Windows.Forms.ImageList(this.components);
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ctx_treeView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridProps)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSettings)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridVariants)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // treeView1
@@ -69,11 +76,11 @@
             this.treeView1.HideSelection = false;
             this.treeView1.ImageIndex = 13;
             this.treeView1.ImageList = this.imageListForTree;
-            this.treeView1.Location = new System.Drawing.Point(12, 39);
+            this.treeView1.Location = new System.Drawing.Point(57, 133);
             this.treeView1.Name = "treeView1";
             this.treeView1.PathSeparator = ".";
             this.treeView1.SelectedImageIndex = 13;
-            this.treeView1.Size = new System.Drawing.Size(335, 342);
+            this.treeView1.Size = new System.Drawing.Size(168, 243);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeView1_KeyDown);
@@ -91,6 +98,27 @@
             this.ctx_copyPath.Size = new System.Drawing.Size(166, 22);
             this.ctx_copyPath.Text = "Копировать путь";
             this.ctx_copyPath.Click += new System.EventHandler(this.ctx_copyPath_Click);
+            // 
+            // imageListForTree
+            // 
+            this.imageListForTree.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListForTree.ImageStream")));
+            this.imageListForTree.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListForTree.Images.SetKeyName(0, "folder.png");
+            this.imageListForTree.Images.SetKeyName(1, "1.png");
+            this.imageListForTree.Images.SetKeyName(2, "2.png");
+            this.imageListForTree.Images.SetKeyName(3, "3.png");
+            this.imageListForTree.Images.SetKeyName(4, "4.png");
+            this.imageListForTree.Images.SetKeyName(5, "5.png");
+            this.imageListForTree.Images.SetKeyName(6, "6.png");
+            this.imageListForTree.Images.SetKeyName(7, "7.png");
+            this.imageListForTree.Images.SetKeyName(8, "8.png");
+            this.imageListForTree.Images.SetKeyName(9, "9.png");
+            this.imageListForTree.Images.SetKeyName(10, "10.png");
+            this.imageListForTree.Images.SetKeyName(11, "11.png");
+            this.imageListForTree.Images.SetKeyName(12, "12.png");
+            this.imageListForTree.Images.SetKeyName(13, "13.png");
+            this.imageListForTree.Images.SetKeyName(14, "folderExp.png");
+            this.imageListForTree.Images.SetKeyName(15, "icons8-обработать-24.png");
             // 
             // dataGridProps
             // 
@@ -113,7 +141,7 @@
             // 
             // bt_Open
             // 
-            this.bt_Open.Location = new System.Drawing.Point(12, 10);
+            this.bt_Open.Location = new System.Drawing.Point(93, 405);
             this.bt_Open.Name = "bt_Open";
             this.bt_Open.Size = new System.Drawing.Size(75, 23);
             this.bt_Open.TabIndex = 2;
@@ -123,7 +151,7 @@
             // 
             // bt_Save
             // 
-            this.bt_Save.Location = new System.Drawing.Point(93, 10);
+            this.bt_Save.Location = new System.Drawing.Point(174, 405);
             this.bt_Save.Name = "bt_Save";
             this.bt_Save.Size = new System.Drawing.Size(75, 23);
             this.bt_Save.TabIndex = 3;
@@ -134,7 +162,7 @@
             // bt_AddCycle
             // 
             this.bt_AddCycle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_AddCycle.Location = new System.Drawing.Point(12, 387);
+            this.bt_AddCycle.Location = new System.Drawing.Point(397, 387);
             this.bt_AddCycle.Name = "bt_AddCycle";
             this.bt_AddCycle.Size = new System.Drawing.Size(75, 23);
             this.bt_AddCycle.TabIndex = 4;
@@ -145,7 +173,7 @@
             // bt_Delete
             // 
             this.bt_Delete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_Delete.Location = new System.Drawing.Point(272, 387);
+            this.bt_Delete.Location = new System.Drawing.Point(559, 386);
             this.bt_Delete.Name = "bt_Delete";
             this.bt_Delete.Size = new System.Drawing.Size(75, 23);
             this.bt_Delete.TabIndex = 5;
@@ -156,7 +184,7 @@
             // bt_AddSignal
             // 
             this.bt_AddSignal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_AddSignal.Location = new System.Drawing.Point(93, 387);
+            this.bt_AddSignal.Location = new System.Drawing.Point(397, 415);
             this.bt_AddSignal.Name = "bt_AddSignal";
             this.bt_AddSignal.Size = new System.Drawing.Size(75, 23);
             this.bt_AddSignal.TabIndex = 6;
@@ -222,7 +250,7 @@
             // bt_Copy
             // 
             this.bt_Copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_Copy.Location = new System.Drawing.Point(174, 387);
+            this.bt_Copy.Location = new System.Drawing.Point(478, 386);
             this.bt_Copy.Name = "bt_Copy";
             this.bt_Copy.Size = new System.Drawing.Size(75, 23);
             this.bt_Copy.TabIndex = 11;
@@ -233,7 +261,7 @@
             // bt_Past
             // 
             this.bt_Past.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_Past.Location = new System.Drawing.Point(174, 415);
+            this.bt_Past.Location = new System.Drawing.Point(478, 415);
             this.bt_Past.Name = "bt_Past";
             this.bt_Past.Size = new System.Drawing.Size(75, 23);
             this.bt_Past.TabIndex = 12;
@@ -289,7 +317,7 @@
             // bt_reloadTr
             // 
             this.bt_reloadTr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_reloadTr.Location = new System.Drawing.Point(272, 416);
+            this.bt_reloadTr.Location = new System.Drawing.Point(559, 415);
             this.bt_reloadTr.Name = "bt_reloadTr";
             this.bt_reloadTr.Size = new System.Drawing.Size(75, 23);
             this.bt_reloadTr.TabIndex = 17;
@@ -316,32 +344,59 @@
             this.button2.Text = "PastVars";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // imageListForTree
+            // tabControl1
             // 
-            this.imageListForTree.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListForTree.ImageStream")));
-            this.imageListForTree.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListForTree.Images.SetKeyName(0, "folder.png");
-            this.imageListForTree.Images.SetKeyName(1, "1.png");
-            this.imageListForTree.Images.SetKeyName(2, "2.png");
-            this.imageListForTree.Images.SetKeyName(3, "3.png");
-            this.imageListForTree.Images.SetKeyName(4, "4.png");
-            this.imageListForTree.Images.SetKeyName(5, "5.png");
-            this.imageListForTree.Images.SetKeyName(6, "6.png");
-            this.imageListForTree.Images.SetKeyName(7, "7.png");
-            this.imageListForTree.Images.SetKeyName(8, "8.png");
-            this.imageListForTree.Images.SetKeyName(9, "9.png");
-            this.imageListForTree.Images.SetKeyName(10, "10.png");
-            this.imageListForTree.Images.SetKeyName(11, "11.png");
-            this.imageListForTree.Images.SetKeyName(12, "12.png");
-            this.imageListForTree.Images.SetKeyName(13, "13.png");
-            this.imageListForTree.Images.SetKeyName(14, "folderExp.png");
-            this.imageListForTree.Images.SetKeyName(15, "icons8-обработать-24.png");
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(12, 27);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(200, 100);
+            this.tabControl1.TabIndex = 20;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(192, 74);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(192, 74);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.файлToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(989, 24);
+            this.menuStrip1.TabIndex = 21;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // файлToolStripMenuItem
+            // 
+            this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
+            this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.файлToolStripMenuItem.Text = "Файл";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(989, 450);
+            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.bt_reloadTr);
@@ -362,6 +417,7 @@
             this.Controls.Add(this.bt_Open);
             this.Controls.Add(this.dataGridProps);
             this.Controls.Add(this.treeView1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = " ";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -369,7 +425,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridProps)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSettings)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridVariants)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -399,6 +459,11 @@
         private System.Windows.Forms.ContextMenuStrip ctx_treeView;
         private System.Windows.Forms.ToolStripMenuItem ctx_copyPath;
         private System.Windows.Forms.ImageList imageListForTree;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
     }
 }
 

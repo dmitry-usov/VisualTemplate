@@ -20,7 +20,7 @@ namespace VisualTemplate
         /// 
 
         static private string _curDir = Directory.GetCurrentDirectory();
-
+        static public Dictionary<int,TempTabPage> TemplatesPages;
 
 
         static string templateFilePath = _curDir;
@@ -43,85 +43,105 @@ namespace VisualTemplate
         public static string globalCsvString ="";
 
         public static Template t;
-        public static ArrayList templateElements;
         
+
 
         [STAThread]
         static void Main()
         {
-            templateElements = new ArrayList();
-            t = new Template();
-            t.Name = "new";
             
+            TemplatesPages = new Dictionary<int, TempTabPage>();
+
+            //НЕОПТИМИЗИРОВАННОЕ ГОВНО ДАЛЕЕ
+
+
+            //t = new Template();
+            //t.Name = "new";
+
             TypeOfProperty = new Dictionary<string, string>();
             Types = new Dictionary<int, string>();
             VariantsDic = new Dictionary<string, Variant>();
             setDic();
 
-            //var fs = new FileStream(templateFullFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            //var sw = new StreamReader(fs);
-            //string jsonStr = sw.ReadToEnd();
-            //sw.Close();
-            //t = JsonConvert.DeserializeObject<Template>(jsonStr);
-            //RestoreParentsInTemplate(t);
-
-
-            //getCsv(tm);
-
-
-
-
-
-
-            //t = new Template();
-            //t.Name = "chrp";
-
-            //Cycle c1 = new Cycle(1, 2);
-            //Cycle c2 = new Cycle(3, 4);
-            //Cycle c3 = new Cycle(5, 6);
-
-            //Variant v = new Variant("addr", "123");
-
-            //t.Add(c1);
-            //t.Add(new Cycle(7, 8));
-
-            //Signal sFix = new Signal("FIX_1");
-            //c1.Add(sFix);
-            //Signal sMns = new Signal("$Lolka$");
-            //sFix.Add(sMns);
-            //Signal sLink = new Signal("F_CV");
-            //sMns.Add(sLink);
-            //sLink.Add(new Cycle(0, 15));
-            //sLink.Cycles[0].Add(new Signal("byte"));
-
-            //Property p = new Property("$num$", "UInt4", "8");
-            //Property p1 = new Property("$num$", "UInt4", "$name$");
-
-            //sLink.Add(p1);
-            //Variant vd = new Variant("name", "Zalupka");
-            //Variant vn = new Variant("num", "1");
-            //Variant vn2 = new Variant("num", "1");
-            //Variant vn3 = new Variant("Lolka", "10");
-            //c1.Add(vd);
-            //c1.Add(vn);
-            //c1.Add(vn3);
-            //sLink.Cycles[0].Add(vn);
-            //sLink.Cycles[0].Signals[0].Add(p);
-
-            //string json = JsonConvert.SerializeObject(t);
-            //Console.WriteLine(json);
-
-            //Template tm = JsonConvert.DeserializeObject<Template>(json);
-
-
-
-
-
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new MainForm());
         }
+
+        //Создание новго теплейта
+        public static TempTabPage CreateNewTemplate()
+        {
+            TempTabPage tmtp = new TempTabPage("new");
+            TemplatesPages.Add(TemplatesPages.Count, tmtp);
+            return tmtp;
+        }
+
+
+
+
+
+        #region work whith tree
+
+        public static void addToTree(object o, TreeView tr, int tempId, TreeNode parentTreeNode = null)
+        {
+            if (o.GetType().ToString() == "VisualTemplate.Template")
+            {
+                Template temp = o as Template;
+
+                parentTreeNode = tr.Nodes.Add(TemplatesPages[tempId].Elements.Count.ToString(), temp.Name);
+
+                TemplatesPages[tempId].Elements.Add(temp);
+
+                if (temp.HasElements)
+                {
+                    foreach (object chObj in temp.Elements)
+                    {
+                        addToTree(chObj, tr, tempId, parentTreeNode);
+                    }
+                }
+            }
+
+            switch (o.GetType().ToString())
+            {
+                case "VisualTemplate.Cycle":
+                    Cycle tempC = o as Cycle;
+                    tempC.Id = TemplatesPages[tempId].Elements.Count.ToString();
+                    parentTreeNode = parentTreeNode.Nodes.Add(tempC.Id, tempC.ToString(), 15);
+
+                    TemplatesPages[tempId].Elements.Add(tempC);
+
+                    RestoreLinks(tempC);
+
+                    if (tempC.HasElements)
+                    {
+                        foreach (object chObj in tempC.Elements)
+                        {
+                            addToTree(chObj, tr,tempId, parentTreeNode);
+                        }
+                    }
+                    break;
+                case "VisualTemplate.Signal":
+                    Signal tempS = o as Signal;
+                    tempS.Id = TemplatesPages[tempId].Elements.Count.ToString();
+                    parentTreeNode = parentTreeNode.Nodes.Add(tempS.Id, tempS.Name, tempS.ImgCode);
+                    TemplatesPages[tempId].Elements.Add(tempS);
+
+                    if (tempS.HasElements)
+                    {
+                        foreach (object chObj in tempS.Elements)
+                        {
+                            addToTree(chObj, tr, tempId, parentTreeNode);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        #endregion
+
+        ///
+        /// НЕОПТИМИЗИРОВАННОЕ ГОВНО ДАЛЕЕ
+        ///
 
         private static void RemeberCsvStr(string str)
         {
@@ -146,37 +166,44 @@ namespace VisualTemplate
             //}
         }
 
-        public static void loadTemplate(OpenFileDialog op, TreeView trVi)
+        public static bool loadTemplate(OpenFileDialog op, TempTabPage opTmp)
         {
             op.Filter = "json files (*.json)|*.json|All files (*.*)|*.*";
             if (op.ShowDialog() == DialogResult.Cancel)
             {
-                return;
+                return false;
             }
             Cursor.Current = Cursors.WaitCursor;
-            trVi.Nodes.Clear();
-            templateElements.Clear();
+            opTmp.TreeView.Nodes.Clear();
+           // templateElements.Clear();
             var fs = new FileStream(op.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var sr = new StreamReader(fs);
             string jsonStr = sr.ReadToEnd();
-            t = JsonConvert.DeserializeObject<Template>(jsonStr);
-            RestoreParentsInTemplate(t);
+            opTmp.Template= JsonConvert.DeserializeObject<Template>(jsonStr);
+            opTmp.Template.CurPath = op.FileName;
+            RestoreParentsInTemplate(opTmp.Template);
 
-            addToTree(t, trVi);
-            trVi.Nodes[0].Expand();
+            addToTree(opTmp.Template, opTmp.TreeView, opTmp.Id);
+            //opTmp.TreeView.Nodes[0].Expand();
             // trVi.ExpandAll();
             sr.Close();
             defaultPathJson = Path.GetDirectoryName(op.FileName);
             Cursor.Current = Cursors.Default;
+            return true;
         }
 
-        public static void deleteSelected(TreeNode trN)
+        public static void deleteSelected(TempTabPage ttp)
         {
-            
-            Element e = getElementById(trN.Name);
-            trN.Remove();
-            templateElements[int.Parse(trN.Name)] = null;
+
+            Element e = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id);
+            ttp.TreeView.SelectedNode.Remove();
             e.Remove();
+            e = null;
+            
+            //Element e = getElementById(trN.Name, tabControl2.SelectedIndex);
+            //trN.Remove();
+            ////templateElements[int.Parse(trN.Name)] = null;
+            //e.Remove();
         }
 
         public static void saveTemplate(SaveFileDialog sf)
@@ -198,28 +225,29 @@ namespace VisualTemplate
 
         public static void setCycle(TreeNode trN, string st, string end, string scvFile)
         {
-            Cycle c = getElementById(trN.Name) as Cycle;
-            c.Start = int.Parse(st);
-            c.End = int.Parse(end);
-            c.csvVarFile = scvFile;
+            //Cycle c = getElementById(trN.Name) as Cycle;
+            //c.Start = int.Parse(st);
+            //c.End = int.Parse(end);
+            //c.csvVarFile = scvFile;
         }
 
-        public static void setCycle(TreeNode trN, DataGridView dgv)
+        public static void setCycle(TempTabPage ttp)
         {
-            Cycle c = getElementById(trN.Name) as Cycle;
-            c.Name = dgv.Rows[0].Cells[1].Value is null ? "":  dgv.Rows[0].Cells[1].Value.ToString();
-            //dataGridSettings.Rows[0].Cells[1].Value.ToString(), dataGridSettings.Rows[1].Cells[1].Value.ToString(), dataGridSettings.Rows[2].Cells[1].Value.ToString()
-            c.Start = int.Parse(dgv.Rows[1].Cells[1].Value.ToString());
-            c.End = int.Parse(dgv.Rows[2].Cells[1].Value.ToString());
-            //if (dgv.Rows[2].Cells[1].Value is null)
-            c.csvVarFile = dgv.Rows[3].Cells[1].Value is null ? "" : dgv.Rows[3].Cells[1].Value.ToString();//dgv.Rows[2].Cells[1].Value.ToString();
-            c.Description = dgv.Rows[4].Cells[1].Value is null ? "" : dgv.Rows[4].Cells[1].Value.ToString();//dgv.Rows[2].Cells[1].Value.ToString();
+            Cycle c = getElementById(ttp.TreeView.SelectedNode.Name,ttp.Id) as Cycle;
+            c.Name = ttp.dgSettings.Rows[0].Cells[1].Value is null ? "": ttp.dgSettings.Rows[0].Cells[1].Value.ToString();
+            ////dataGridSettings.Rows[0].Cells[1].Value.ToString(), dataGridSettings.Rows[1].Cells[1].Value.ToString(), dataGridSettings.Rows[2].Cells[1].Value.ToString()
+            c.Start = int.Parse(ttp.dgSettings.Rows[1].Cells[1].Value.ToString());
+            c.End = int.Parse(ttp.dgSettings.Rows[2].Cells[1].Value.ToString());
+            ////if (dgv.Rows[2].Cells[1].Value is null)
+            c.csvVarFile = ttp.dgSettings.Rows[3].Cells[1].Value is null ? "" : ttp.dgSettings.Rows[3].Cells[1].Value.ToString();//dgv.Rows[2].Cells[1].Value.ToString();
+            c.Description = ttp.dgSettings.Rows[4].Cells[1].Value is null ? "" : ttp.dgSettings.Rows[4].Cells[1].Value.ToString();//dgv.Rows[2].Cells[1].Value.ToString();
+
         }
 
-        public static void setSignal(TreeNode trN, string name)
+        public static void setSignal(TempTabPage ttp)
         {
-            Signal s = getElementById(trN.Name) as Signal;
-            s.Name = name;
+            Signal s = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id) as Signal;
+            s.Name = ttp.dgSettings.Rows[0].Cells[1].Value.ToString();
         }
 
         //восстановление ссылок на родительские элементы после чтения из json
@@ -836,12 +864,12 @@ namespace VisualTemplate
 
 
 
-        public static object getObjectFromTree(string key)
+        public static object getObjectFromTree(string key, int tempId)
         {
             int id;
            if( int.TryParse(key, out id))
             {
-                return getObject(id);
+                return getObject(id,  tempId);
             }
            else
             {
@@ -849,21 +877,21 @@ namespace VisualTemplate
             }
         }
 
-        private static object getObject(int id)
+        private static object getObject(int id, int tempId)
         {
-            return templateElements[id];
+            return TemplatesPages[tempId].Elements[id];
         }
 
-        public static Element getElementById(int id)
+        public static Element getElementById(int id, int tempId)
         {
-            return templateElements[id] as Element;
+            return TemplatesPages[tempId].Elements[id] as Element;
         }
-        public static Element getElementById(string key)
+        public static Element getElementById(string key, int ttpId)
         {
             int id;
             if (int.TryParse(key, out id))
             {
-                return templateElements[id] as Element;
+                return TemplatesPages[ttpId].Elements[id] as Element;
             }
             else
             {
@@ -873,8 +901,8 @@ namespace VisualTemplate
 
         public static void ReplaceInTree(TreeNode trN, string find, string rep)
         {
-            Element el = getElementById(trN.Name);
-            Service.Replace(el,find,rep);
+            //Element el = getElementById(trN.Name);
+            //Service.Replace(el,find,rep);
         }
 
         public static void setVariants(Cycle c, DataGridView dgV)
@@ -890,24 +918,24 @@ namespace VisualTemplate
             }
         }
 
-        public static void setCsvVarPath(DataGridView dgV)
+        public static void setCsvVarPath(TempTabPage ttp)
         {
             int cvNum = 0;
-            foreach (DataGridViewRow row in dgV.Rows)
+            foreach (DataGridViewRow row in ttp.dgProps.Rows)
             {
-                t.CsvVars[cvNum].Name = row.Cells[0].Value.ToString();
-                t.CsvVars[cvNum].Path = row.Cells[1].Value.ToString();
-                t.CsvVars[cvNum].Separator = row.Cells[2].Value.ToString().ToCharArray()[0];
+                ttp.Template.CsvVars[cvNum].Name = row.Cells[0].Value.ToString();
+                ttp.Template.CsvVars[cvNum].Path = row.Cells[1].Value.ToString();
+                ttp.Template.CsvVars[cvNum].Separator = row.Cells[2].Value.ToString().ToCharArray()[0];
                 switch (row.Cells[3].Value.ToString())
                 {
                     case "Default":
-                        t.CsvVars[cvNum].Encoding = Encoding.Default;
+                        ttp.Template.CsvVars[cvNum].Encoding = Encoding.Default;
                         break;
                     case "ASCII":
-                        t.CsvVars[cvNum].Encoding = Encoding.ASCII;
+                        ttp.Template.CsvVars[cvNum].Encoding = Encoding.ASCII;
                         break;
                     case "UTF8":
-                        t.CsvVars[cvNum].Encoding = Encoding.UTF8;
+                        ttp.Template.CsvVars[cvNum].Encoding = Encoding.UTF8;
                         break;
                 }
                 cvNum++;
@@ -941,12 +969,12 @@ namespace VisualTemplate
                 dgV.Rows.Add(v.Name, v.Value, v.Step);
             }
         }
-        public static void addCsvVar()
+        public static void addCsvVar(TempTabPage ttp)
         {
             CsvVar csv = new CsvVar(@"C:\file.csv");
             csv.Name = "Csv1";
             csv.Separator = ';';
-            t.Add(csv);
+            ttp.Template.Add(csv);
         }
 
         public static void getProperties(Signal s, DataGridView dgV, TreeNode trN = null)
@@ -968,47 +996,66 @@ namespace VisualTemplate
             }
         }
 
-        public static void getCsvVars (DataGridView dgV)
+        public static void getCsvVars (TempTabPage ttp)
         {
-            dgV.Rows.Clear();
-            foreach (CsvVar cv in t.CsvVars)
+            ttp.dgProps.Rows.Clear();
+            foreach (CsvVar cv in ttp.Template.CsvVars)
             {
-                dgV.Rows.Add(cv.Name,cv.Path, cv.Separator.ToString(), cv.encodingStr);
+                ttp.dgProps.Rows.Add(cv.Name,cv.Path, cv.Separator.ToString(), cv.encodingStr);
             }
         }
 
-        public static void addCycle(TreeNode trN)
+        public static void addCycle(TempTabPage ttp)
         {
-
             Cycle c = new Cycle(1, 1);
 
-            if (trN.Text == t.Name)
+            if (ttp.TreeView.SelectedNode.Text == ttp.Template.Name)
             {
-                t.Add(c);
+                ttp.Template.Add(c);
             }
             else
             {
-                Element curElement = getElementById(trN.Name);
+                Element curElement = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id);
                 curElement.Add(c);
             }
 
-            c.Id = templateElements.Count.ToString();
-            trN.Nodes.Add(c.Id, c.ToString(),15);
-            templateElements.Add(c);
+            c.Id = ttp.Elements.Count.ToString();
+            ttp.TreeView.SelectedNode.Nodes.Add(c.Id, c.ToString(), 15);
+            ttp.Elements.Add(c);
+            ttp.TreeView.SelectedNode = ttp.TreeView.SelectedNode.LastNode;
         }
-        public static void addSignal(TreeNode trN)
+        public static void addSignal(TempTabPage ttp)
         {
 
-            Signal s = new Signal("signal");
-            if (trN is null) return;
-            Element curElement = getElementById(trN.Name);
+            Signal s = new Signal("Signal");
+            if (ttp.TreeView.SelectedNode is null) return;
+            Element curElement = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id);
             if (curElement is null) return;
             curElement.Add(s);
 
 
-            s.Id = templateElements.Count.ToString();
-            trN.Nodes.Add(s.Id, s.ToString(), 0);
-            templateElements.Add(s);
+            s.Id = ttp.Elements.Count.ToString();
+           ttp.TreeView.SelectedNode.Nodes.Add(s.Id, s.ToString(), 0);
+            ttp.Elements.Add(s);
+
+            s.Add(new Property("1", "UInt4", "8"));
+            ttp.TreeView.SelectedNode = ttp.TreeView.SelectedNode.LastNode;
+        }
+
+        public static void addFolder(TempTabPage ttp)
+        {
+
+            Signal s = new Signal("Folder");
+            if (ttp.TreeView.SelectedNode is null) return;
+            Element curElement = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id);
+            if (curElement is null) return;
+            curElement.Add(s);
+
+
+            s.Id = ttp.Elements.Count.ToString();
+            ttp.TreeView.SelectedNode.Nodes.Add(s.Id, s.ToString(), 0);
+            ttp.Elements.Add(s);
+            ttp.TreeView.SelectedNode = ttp.TreeView.SelectedNode.LastNode;
         }
 
         public static void RestoreLinks(Cycle c)
@@ -1032,61 +1079,6 @@ namespace VisualTemplate
 
        // public static void addToTree(Element o, TreeNode tr, TreeNode parentTreeNode = null)
 
-        public static void addToTree(object o , TreeView tr, TreeNode parentTreeNode = null)
-        {
-
-            if(o.GetType().ToString() == "VisualTemplate.Template")
-            {
-                Template temp = o as Template;
-
-                parentTreeNode = tr.Nodes.Add(templateElements.Count.ToString(), temp.Name);
-
-                templateElements.Add(temp);
-
-                if (temp.HasElements)
-                {
-                    foreach (object chObj in temp.Elements)
-                    {
-                        addToTree(chObj, tr, parentTreeNode);
-                    }
-                }
-            }
-
-            switch (o.GetType().ToString())
-            {
-                case "VisualTemplate.Cycle":
-                    Cycle tempC = o as Cycle;
-                    tempC.Id = templateElements.Count.ToString();
-                    parentTreeNode = parentTreeNode.Nodes.Add(tempC.Id, tempC.ToString(),15);
-
-                    templateElements.Add(tempC);
-
-                    RestoreLinks(tempC);
-
-                    if (tempC.HasElements)
-                    {
-                        foreach (object chObj in tempC.Elements)
-                        {
-                            addToTree(chObj, tr, parentTreeNode);
-                        }
-                    }
-                    break;
-                case "VisualTemplate.Signal":
-                    Signal tempS = o as Signal;
-                    tempS.Id = templateElements.Count.ToString();
-                    parentTreeNode = parentTreeNode.Nodes.Add(tempS.Id, tempS.Name, tempS.ImgCode);
-                    templateElements.Add(tempS);
-
-                    if (tempS.HasElements)
-                    {
-                        foreach (object chObj in tempS.Elements)
-                        {
-                            addToTree(chObj, tr, parentTreeNode);
-                        }
-                    }
-                    break;
-            }
-        }
 
 
         private static void setDic()

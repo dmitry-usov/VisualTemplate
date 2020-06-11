@@ -40,7 +40,8 @@ namespace VisualTemplate
             }
         }
 
-
+        [JsonIgnore]
+        public string CurPath { get; set; }
         public string Name { get; set; }
         public List<Cycle> Cycles { get; set; }
 
@@ -49,6 +50,14 @@ namespace VisualTemplate
             _elements = new ArrayList();
             Cycles = new List<Cycle>();
             CsvVars = new List<CsvVar>();
+        }
+
+        public Template(string name)
+        {
+            _elements = new ArrayList();
+            Cycles = new List<Cycle>();
+            CsvVars = new List<CsvVar>();
+            Name = name;
         }
 
         public void Add(Cycle c)

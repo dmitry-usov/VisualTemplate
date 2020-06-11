@@ -12,8 +12,8 @@ namespace VisualTemplate
 {
     public partial class FindRep : Form
     {
-        private Form1 _main;
-        public FindRep(Form1 main)
+        private MainForm _main;
+        public FindRep(MainForm main)
         {
             InitializeComponent();
             _main = main;
