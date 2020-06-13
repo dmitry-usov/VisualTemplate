@@ -54,6 +54,7 @@ namespace VisualTemplate
                 switch (res)
                 {
                     case DialogResult.Yes:
+                        saveToolStripButton_Click(null,null);
                         break;
                     case DialogResult.No:
                         break;
@@ -270,6 +271,7 @@ namespace VisualTemplate
             {
                 curTempTabPage.Template.Name = curTempTabPage.dgSettings.Rows[0].Cells[1].Value.ToString();
                 TrNdSel.Text = curTempTabPage.Template.Name;
+                curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
             }
             else
             {
@@ -799,6 +801,22 @@ namespace VisualTemplate
             toolStripButton1.Enabled = true;
             toolStripButton2.Enabled = true;
 
+        }
+
+        private void saveToolStripButton_Click(object sender, EventArgs e)
+        {
+            if(curTempTabPage.Template.CurPath is null)
+            {
+                saveFileDialog1.Filter = "json files (*.json)|*.json|All files (*.*)|*.*";
+                if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                {
+                    return;
+                }
+                curTempTabPage.Template.CurPath = saveFileDialog1.FileName;
+            }
+            Program.saveTemplate(curTempTabPage);
+            curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
+            curTempTabPage.Changed = false;
         }
     }
 }

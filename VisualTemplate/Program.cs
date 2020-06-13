@@ -222,6 +222,15 @@ namespace VisualTemplate
             defaultPathJson = Path.GetDirectoryName(sf.FileName);
         }
 
+        public static void saveTemplate(TempTabPage ttp)
+        {
+            string json = JsonConvert.SerializeObject(ttp.Template);
+            var fs = new FileStream(ttp.Template.CurPath, FileMode.Create);
+            var sw = new StreamWriter(fs);
+            sw.Write(json);
+            sw.Close();
+        }
+
 
         public static void setCycle(TreeNode trN, string st, string end, string scvFile)
         {
