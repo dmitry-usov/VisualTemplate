@@ -267,11 +267,12 @@ namespace VisualTemplate
 
             
             TreeNode TrNdSel = curTempTabPage.TreeView.SelectedNode;
-            if (TrNdSel.Name == "0")
+             if (TrNdSel.Name == "0")
             {
                 curTempTabPage.Template.Name = curTempTabPage.dgSettings.Rows[0].Cells[1].Value.ToString();
                 TrNdSel.Text = curTempTabPage.Template.Name;
                 curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
+                curTempTabPage.Changed = true;
             }
             else
             {
@@ -291,10 +292,9 @@ namespace VisualTemplate
                         break;
                 }
             }
-            if (!curTempTabPage.Changed)
+            if (curTempTabPage.Changed)
             {
                 curTempTabPage.TabPage.Text += "*";
-                curTempTabPage.Changed = true;
             }
         }
 
@@ -817,6 +817,26 @@ namespace VisualTemplate
             Program.saveTemplate(curTempTabPage);
             curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
             curTempTabPage.Changed = false;
+        }
+
+        private void outToolStripButton_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
+            if (!(Program.defaultPathOutCsv is null)) saveFileDialog1.InitialDirectory = Program.defaultPathOutCsv;
+            if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+            {
+                return;
+            }
+            Program.globalCsvString = "";
+            Program.getCsv(curTempTabPage.Template);
+
+            var fs = new FileStream(saveFileDialog1.FileName, FileMode.Create);
+            var sw = new StreamWriter(fs, Encoding.Default);
+            Program.globalCsvString = Program.globalCsvString.Trim();
+            sw.Write(Program.globalCsvString);
+            sw.Close();
+            Program.defaultPathOutCsv = Path.GetDirectoryName(saveFileDialog1.FileName);
+
         }
     }
 }

@@ -394,18 +394,18 @@ namespace VisualTemplate
         {
             foreach(Cycle c in t.Elements)
             {
-                runCycle(c);
+                runCycle(c, t);
             }
         }
 
-        private static void runCycle (Cycle c)
+        private static void runCycle (Cycle c, Template t)
         {
             c.CsvString = null;
             if (c.csvVarFile is null || c.csvVarFile == "")
             {
                 for (c.Counter = c.Start; c.isGoOn; c.Increase())
                 {
-                    goOnCycle(c);
+                    goOnCycle(c, t);
                  //   //c.CsvString = mathOnDollar(c.CsvString, ref k); //c.CsvString.Replace("$$", k.ToString());
                     culcValuec(c);
                 }
@@ -415,7 +415,7 @@ namespace VisualTemplate
             }
             else
             {
-                readCsv(c, t.getCsvVar(c.csvVarFile));
+                readCsv(c, t.getCsvVar(c.csvVarFile), t);
                // Console.WriteLine(c.CsvString);
              //   RemeberCsvStr(c.CsvString);
                 c.ResetValues();
@@ -447,7 +447,7 @@ namespace VisualTemplate
             }
         }
 
-        static void readCsv(Cycle c, CsvVar csv)
+        static void readCsv(Cycle c, CsvVar csv, Template t)
         {
             using (StreamReader sr = new StreamReader(csv.Path, csv.Encoding))
             {
@@ -470,7 +470,7 @@ namespace VisualTemplate
                             
                         }
                     }
-                    goOnCycle(c);
+                    goOnCycle(c, t);
                 //   // c.CsvString = mathOnDollar(c.CsvString, ref q);
                     culcValuec(c);
 
@@ -746,7 +746,7 @@ namespace VisualTemplate
             }
         }
 
-        private static void goOnCycle(Cycle c, Signal sParent = null, string propStr = "")
+        private static void goOnCycle(Cycle c, Template t, Signal sParent = null, string propStr = "")
         {
             List<Signal> listOfSignals;
             //если цикл имеет сигналы
@@ -804,14 +804,14 @@ namespace VisualTemplate
                     //если сигнал имеет дочерние сигналы тогда вызываем себя ещё раз
                     if (sCh.HasSignals)
                     {
-                        goOnCycle(c, sCh, propStr);
+                        goOnCycle(c, t, sCh, propStr);
                     }
                     //если сигнал имеет дочерние циклы то запускаем цикл
                     if (sCh.HasCycles)
                     {
                         foreach (Cycle cCh in sCh.Cycles)
                         {
-                            runCycle(cCh);
+                            runCycle(cCh,t);
                         }
                     }
                     ResetSignalsNames(listOfSignals);
@@ -822,7 +822,7 @@ namespace VisualTemplate
             {
                 foreach (Cycle cCh in c.Cycles)
                 {
-                    runCycle(cCh);
+                    runCycle(cCh,t);
                 }
             }
         }

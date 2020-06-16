@@ -68,7 +68,7 @@
             this.SaveAsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.closeToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.cutToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.outToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.panel1 = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -508,10 +508,10 @@
             this.SaveAsToolStripButton,
             this.closeToolStripButton,
             this.toolStripSeparator,
-            this.cutToolStripButton});
+            this.outToolStripButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(156, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(187, 25);
             this.toolStrip1.TabIndex = 24;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -570,15 +570,15 @@
             this.toolStripSeparator.Name = "toolStripSeparator";
             this.toolStripSeparator.Size = new System.Drawing.Size(6, 25);
             // 
-            // cutToolStripButton
+            // outToolStripButton
             // 
-            this.cutToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.cutToolStripButton.Enabled = false;
-            this.cutToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("cutToolStripButton.Image")));
-            this.cutToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.cutToolStripButton.Name = "cutToolStripButton";
-            this.cutToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.cutToolStripButton.Text = "C&ut";
+            this.outToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.outToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("outToolStripButton.Image")));
+            this.outToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.outToolStripButton.Name = "outToolStripButton";
+            this.outToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.outToolStripButton.Text = "C&ut";
+            this.outToolStripButton.Click += new System.EventHandler(this.outToolStripButton_Click);
             // 
             // tabControl2
             // 
@@ -884,7 +884,7 @@
             this.pastToolStripButton1,
             this.dublToolStripButton3,
             this.deleteToolStripButton2});
-            this.toolStrip2.Location = new System.Drawing.Point(231, 24);
+            this.toolStrip2.Location = new System.Drawing.Point(156, 24);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Size = new System.Drawing.Size(164, 25);
             this.toolStrip2.TabIndex = 0;
@@ -983,7 +983,7 @@
             this.toolStripButton1,
             this.toolStripButton2,
             this.toolStripButton3});
-            this.toolStrip3.Location = new System.Drawing.Point(396, 24);
+            this.toolStrip3.Location = new System.Drawing.Point(320, 24);
             this.toolStrip3.Name = "toolStrip3";
             this.toolStrip3.Size = new System.Drawing.Size(147, 25);
             this.toolStrip3.TabIndex = 0;
@@ -1119,7 +1119,7 @@
         private System.Windows.Forms.ToolStripButton saveToolStripButton;
         private System.Windows.Forms.ToolStripButton SaveAsToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
-        private System.Windows.Forms.ToolStripButton cutToolStripButton;
+        private System.Windows.Forms.ToolStripButton outToolStripButton;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
