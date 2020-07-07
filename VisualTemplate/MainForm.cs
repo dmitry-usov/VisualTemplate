@@ -43,6 +43,7 @@ namespace VisualTemplate
             curTempTabPage.dgSettings.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
             tabControl2.SelectedIndex = curTempTabPage.Id;
             toolStripStatusLabel1.Text = Program.TemplatesPages.Count.ToString();
+            curTempTabPage.TreeView.ImageList = imageListForTree;
             curTempTabPage.Changed = true;
         }
 
@@ -114,12 +115,18 @@ namespace VisualTemplate
         private void openToolStripButton_Click(object sender, EventArgs e)
         {
             closeToolStripButton.Enabled = true;
+
             curTempTabPage = Program.CreateNewTemplate();
             curTempTabPage.Id = tabControl2.TabPages.Count;
+
             if (Program.loadTemplate(openFileDialog1, curTempTabPage) == false)
             {
+                Program.TemplatesPages.Remove(curTempTabPage.Id);
                 return;
             }
+
+
+
             tabControl2.TabPages.Add(curTempTabPage.TabPage);
             curTempTabPage.TreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             curTempTabPage.dgSettings.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
@@ -128,7 +135,7 @@ namespace VisualTemplate
             curTempTabPage.dgSettings.Columns.Add("Value", "Значение");
             curTempTabPage.dgSettings.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
             curTempTabPage.dgSettings.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
-
+            curTempTabPage.TreeView.ImageList = imageListForTree;
             curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
             tabControl2.SelectedIndex = curTempTabPage.Id;
             toolStripStatusLabel1.Text = Program.TemplatesPages.Count.ToString();
@@ -148,7 +155,7 @@ namespace VisualTemplate
             {
                 return;
             }
-           // TrNdSel.SelectedImageIndex = TrNdSel.ImageIndex;
+            TrNdSel.SelectedImageIndex = TrNdSel.ImageIndex;
             object obj = Program.getObjectFromTree(TrNdSel.Name, tabControl2.SelectedIndex);
             if (obj.GetType().ToString() == "VisualTemplate.Cycle")
             {
@@ -292,7 +299,7 @@ namespace VisualTemplate
                         break;
                 }
             }
-            if (curTempTabPage.Changed)
+            if (!curTempTabPage.Changed)
             {
                 curTempTabPage.TabPage.Text += "*";
             }
