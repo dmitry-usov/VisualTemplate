@@ -399,7 +399,6 @@ namespace VisualTemplate
                         Cycle c = el as Cycle;
                         Program.setVariants(c, curTempTabPage.dgProps);
                         break;
-
                 }
             }
 
@@ -585,7 +584,6 @@ namespace VisualTemplate
                     c.Add(v);
                     Program.getVariants(c, dataGridProps);
                     break;
-
             }
         }
 
@@ -634,6 +632,7 @@ namespace VisualTemplate
         {
             pastToolStripButton1.Enabled = true;
             Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
+            if (el is null) return;
             switch (el.GetType().ToString())
             {
                 case "VisualTemplate.Signal":
@@ -668,7 +667,7 @@ namespace VisualTemplate
             //        //treeView1.ExpandAll();
             //        break;
             //}
-
+            if (el is null) return;
             if (Program.bufElem.GetType().ToString() == "VisualTemplate.Signal")
             {
                 Signal bs = Program.bufElem as Signal;
