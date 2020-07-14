@@ -9,8 +9,26 @@ namespace VisualTemplate
 {
     class CsvVar
     {
+        private string _path;
         public string Name { get; set; }
-        public string Path{ get; set;}
+        public string Path
+        {
+            get
+            {
+                if(_path.IndexOf(@":\") > 0)
+                {
+                    return _path;
+                }
+                else
+                {
+                    return _path;
+                }
+            }
+            set
+            {
+                _path = value;
+            }
+        }
         public char Separator { get; set; }
 
         [JsonIgnore]

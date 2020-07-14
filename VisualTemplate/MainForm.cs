@@ -259,6 +259,17 @@ namespace VisualTemplate
                 curTmp.dgProps.Columns.Add(EncType);
                 curTmp.dgProps.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable;
 
+                if (t.CsvVars.Count > 0)
+                {
+                    toolStripButton1.Enabled = true;
+                    toolStripButton2.Enabled = true;
+                }
+                else
+                {
+                    toolStripButton1.Enabled = false;
+                    toolStripButton2.Enabled = false;
+                }
+
                 Program.getCsvVars(curTmp);
                 Program.getSettings(t, TrNdSel, curTmp.dgSettings);
 

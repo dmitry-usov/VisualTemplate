@@ -446,44 +446,64 @@ namespace VisualTemplate
                 return getParentCycle(el.Parent);
             }
         }
+        static string getCsvPath(CsvVar csv, Template t)
+        {
+            if (csv.Path.IndexOf(@":\") > 0)
+            {
+                return csv.Path; 
+            }
+            else
+            {
+                return Path.GetDirectoryName(t.CurPath) + @"\" + csv.Path;
+            }
+        }
+
+
 
         static void readCsv(Cycle c, CsvVar csv, Template t)
         {
-            using (StreamReader sr = new StreamReader(csv.Path, csv.Encoding))
-            {
-                string line;
-                string headers = sr.ReadLine();
-                string[] headersArray = headers.Split(csv.Separator);
-               // List<string> backupCycleParams = new List<string>(cycleParams);
-                while ((line = sr.ReadLine()) != null)
+            try { 
+                using (StreamReader sr = new StreamReader(getCsvPath(csv,t), csv.Encoding))
                 {
-                    string[] lineArray = line.Split(csv.Separator);
-
-                    for (int k = 0; k < headersArray.Length; k++)
+                    string line;
+                    string headers = sr.ReadLine();
+                    string[] headersArray = headers.Split(csv.Separator);
+                    // List<string> backupCycleParams = new List<string>(cycleParams);
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        for (int i = 0; i < c.Variatns.Count; i++)
+                        string[] lineArray = line.Split(csv.Separator);
+
+                        for (int k = 0; k < headersArray.Length; k++)
                         {
-                            if(c.Variatns[i].Value == "%"+headersArray[k]+"%")
+                            for (int i = 0; i < c.Variatns.Count; i++)
                             {
-                                c.Variatns[i].setTempValue(lineArray[k]);
+                                if (c.Variatns[i].Value == "%" + headersArray[k] + "%")
+                                {
+                                    c.Variatns[i].setTempValue(lineArray[k]);
+                                }
+
                             }
-                            
                         }
+                        goOnCycle(c, t);
+                        //   // c.CsvString = mathOnDollar(c.CsvString, ref q);
+                        culcValuec(c);
+
+                        // Console.WriteLine(c.CsvString);
+                        RemeberCsvStr(c.CsvString);
+                        c.CsvString = "";
+                        c.ResetValues();
+                        //makeCsv2(getStatr(cycleParams[0]), getEnd(cycleParams[0]), 0);
+
+                        //cycleParams.Clear();
+                        //cycleParams.AddRange(backupCycleParams);
+
                     }
-                    goOnCycle(c, t);
-                //   // c.CsvString = mathOnDollar(c.CsvString, ref q);
-                    culcValuec(c);
-
-                   // Console.WriteLine(c.CsvString);
-                    RemeberCsvStr(c.CsvString);
-                    c.CsvString = "";
-                    c.ResetValues();
-                    //makeCsv2(getStatr(cycleParams[0]), getEnd(cycleParams[0]), 0);
-
-                    //cycleParams.Clear();
-                    //cycleParams.AddRange(backupCycleParams);
-
                 }
+            }
+            catch(IOException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
             }
         }
 
@@ -837,13 +857,13 @@ namespace VisualTemplate
             while (!(pCycle is null))
             {
                 int p;
-                int indexOf = outStr.IndexOf("$.");
+                int indexOf = outStr.IndexOf("$@");
                 outStr = replaceVariants(pCycle, outStr);
                 while (indexOf>0 & int.TryParse(outStr[indexOf+2].ToString(), out p) )
                 {
                     int od = 0;
                     int d = 0;
-                    string rmbStr = "$.";
+                    string rmbStr = "$@";
                     for(int h = indexOf; h < outStr.Length; h++)
                     {
                         if ( int.TryParse( outStr[h+2].ToString(),out od))
@@ -860,7 +880,7 @@ namespace VisualTemplate
                     if (deep == d)
                     {
                         outStr = mathOnDollar(CsvStr, pCycle, rmbStr);
-                        indexOf = outStr.IndexOf("$.");
+                        indexOf = outStr.IndexOf("$@");
                         //outStr = outStr.Replace(rmbStr, pCycle.Counter.ToString());
                     }
                     
