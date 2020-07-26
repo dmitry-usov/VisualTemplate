@@ -37,15 +37,26 @@ namespace VisualTemplate
             curTempTabPage.TreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             curTempTabPage.dgSettings.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
             curTempTabPage.dgProps.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridProps_CellEndEdit);
-            curTempTabPage.dgSettings.Columns.Add("Param", "Наименование");
+            curTempTabPage.dgSettings.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSettings_CellClick);
+            curTempTabPage.dgProps.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
+            curTempTabPage.dgProps.LocationChanged += new System.EventHandler(this.LastColumnComboSelectionChanged);
+
+
+            curTempTabPage.dgSettings.Columns.Add("Param", "Имя");
             curTempTabPage.dgSettings.Columns.Add("Value", "Значение");
+            curTempTabPage.dgSettings.Columns.Add("", "");
             curTempTabPage.dgSettings.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgSettings.Columns[0].Width = 70;
             curTempTabPage.dgSettings.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgSettings.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgSettings.Columns[2].Width = 50;
             tabControl2.SelectedIndex = curTempTabPage.Id;
             toolStripStatusLabel1.Text = Program.TemplatesPages.Count.ToString();
             curTempTabPage.TreeView.ImageList = imageListForTree;
             curTempTabPage.Changed = true;
         }
+
+        
 
         private void closeToolStripButton_Click(object sender, EventArgs e)
         {
@@ -63,7 +74,6 @@ namespace VisualTemplate
                         return;
                 }
             }
-
 
             int removeIndex = tabControl2.SelectedIndex;
             if (removeIndex < 0) return;
@@ -124,21 +134,26 @@ namespace VisualTemplate
                 Program.TemplatesPages.Remove(curTempTabPage.Id);
                 return;
             }
-
-
-
             tabControl2.TabPages.Add(curTempTabPage.TabPage);
             curTempTabPage.TreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             curTempTabPage.dgSettings.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
             curTempTabPage.dgProps.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridProps_CellEndEdit);
-            curTempTabPage.dgSettings.Columns.Add("Param", "Наименование");
+            curTempTabPage.dgSettings.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSettings_CellClick);
+            curTempTabPage.dgSettings.Columns.Add("Param", "Имя");
             curTempTabPage.dgSettings.Columns.Add("Value", "Значение");
+            curTempTabPage.dgSettings.Columns.Add("", "");
             curTempTabPage.dgSettings.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgSettings.Columns[0].Width = 70;
             curTempTabPage.dgSettings.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgSettings.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgSettings.Columns[2].Width = 50;
             curTempTabPage.TreeView.ImageList = imageListForTree;
             curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
             tabControl2.SelectedIndex = curTempTabPage.Id;
             toolStripStatusLabel1.Text = Program.TemplatesPages.Count.ToString();
+
+            curTempTabPage.dgProps.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
+            curTempTabPage.dgProps.LocationChanged += new System.EventHandler(this.LastColumnComboSelectionChanged);
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -170,7 +185,7 @@ namespace VisualTemplate
                 curTmp.dgProps.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
                 curTmp.dgProps.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
                 Cycle c = obj as Cycle;
-                Program.getSettings(c, TrNdSel, curTmp.dgSettings);
+                Program.getSettings(c, curTmp);
                 Program.getVariants(c, curTmp.dgProps);
 
                 if (c.Variatns.Count > 0)
@@ -210,6 +225,7 @@ namespace VisualTemplate
                 curTmp.dgProps.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
                 curTmp.dgProps.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
                 curTmp.dgProps.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+                curTmp.dgProps.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 Signal s = obj as Signal;
                 Program.getSettings(s, TrNdSel, curTmp.dgSettings);
                 Program.getProperties(s, curTmp.dgProps, TrNdSel);
@@ -330,7 +346,7 @@ namespace VisualTemplate
 
         private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            if (dataGridProps.CurrentCell.ColumnIndex == 0 && e.Control is ComboBox)
+            if (curTempTabPage.dgProps.CurrentCell.ColumnIndex == 0 && e.Control is ComboBox)
             {
                 ComboBox comboBox = e.Control as ComboBox;
                 comboBox.SelectedIndexChanged -= LastColumnComboSelectionChanged;
@@ -340,11 +356,11 @@ namespace VisualTemplate
 
         private void LastColumnComboSelectionChanged(object sender, EventArgs e)
         {
-            var currentcell = dataGridProps.CurrentCellAddress;
+            var currentcell = curTempTabPage.dgProps.CurrentCellAddress;
             var sendingCB = sender as DataGridViewComboBoxEditingControl;
             if (currentcell.X == 0)
             {
-                dataGridProps.Rows[currentcell.Y].Cells[1].Value = Program.TypeOfProperty[sendingCB.EditingControlFormattedValue.ToString()];
+                curTempTabPage.dgProps.Rows[currentcell.Y].Cells[1].Value = Program.TypeOfProperty[sendingCB.EditingControlFormattedValue.ToString()];
             }
         }
 
@@ -854,6 +870,16 @@ namespace VisualTemplate
             sw.Close();
             Program.defaultPathOutCsv = Path.GetDirectoryName(saveFileDialog1.FileName);
 
+        }
+
+
+
+        private void dgSettings_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex != 3 || e.ColumnIndex != 2) return;
+            Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
+            Program.updateVarsFromCsv(curTempTabPage, el as Cycle);
+            Program.getVariants(el as Cycle, curTempTabPage.dgProps);
         }
     }
 }

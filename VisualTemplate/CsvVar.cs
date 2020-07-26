@@ -29,6 +29,12 @@ namespace VisualTemplate
                 _path = value;
             }
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public char Separator { get; set; }
 
         [JsonIgnore]

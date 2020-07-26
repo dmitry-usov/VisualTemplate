@@ -368,13 +368,34 @@ namespace VisualTemplate
 
         }
 
-        public static void getSettings(Cycle c, TreeNode teN, DataGridView dgV)
+
+
+        public static void getSettings(Cycle c, TempTabPage t)
         {
+            DataGridView dgV = t.dgSettings;
             dgV.Rows.Clear();
-            dgV.Rows.Add("Name", c.Name);
+
+           
+            DataGridViewRow csvrow = new DataGridViewRow();
+            DataGridViewTextBoxCell namecell = new DataGridViewTextBoxCell();
+            DataGridViewComboBoxCell csv_cell = new DataGridViewComboBoxCell();
+            DataGridViewButtonCell btn_cell = new DataGridViewButtonCell();
+            btn_cell.Value = "updt";
+            csv_cell.Items.Add(""); 
+            foreach (CsvVar cv in t.Template.CsvVars)
+            {
+                csv_cell.Items.Add(cv.Name);
+            }
+            csv_cell.Value = c.csvVarFile;
+
+            csvrow.Cells.Add(namecell);
+            namecell.Value = "csv";
+            csvrow.Cells.Add(csv_cell);
+            csvrow.Cells.Add(btn_cell);
+            dgV.Rows.Add("Name", c.Name); 
             dgV.Rows.Add("Start",c.Start);
             dgV.Rows.Add("End", c.End);
-            dgV.Rows.Add("CsvFile", c.csvVarFile);
+            dgV.Rows.Add(csvrow);
             dgV.Rows.Add("Description", c.Description);
         }
         public static void getSettings(Signal s, TreeNode teN, DataGridView dgV)
@@ -448,6 +469,7 @@ namespace VisualTemplate
         }
         static string getCsvPath(CsvVar csv, Template t)
         {
+            if (csv is null) return null;
             if (csv.Path.IndexOf(@":\") > 0)
             {
                 return csv.Path; 
@@ -468,7 +490,6 @@ namespace VisualTemplate
                     string line;
                     string headers = sr.ReadLine();
                     string[] headersArray = headers.Split(csv.Separator);
-                    // List<string> backupCycleParams = new List<string>(cycleParams);
                     while ((line = sr.ReadLine()) != null)
                     {
                         string[] lineArray = line.Split(csv.Separator);
@@ -481,22 +502,13 @@ namespace VisualTemplate
                                 {
                                     c.Variatns[i].setTempValue(lineArray[k]);
                                 }
-
                             }
                         }
                         goOnCycle(c, t);
-                        //   // c.CsvString = mathOnDollar(c.CsvString, ref q);
                         culcValuec(c);
-
-                        // Console.WriteLine(c.CsvString);
                         RemeberCsvStr(c.CsvString);
                         c.CsvString = "";
                         c.ResetValues();
-                        //makeCsv2(getStatr(cycleParams[0]), getEnd(cycleParams[0]), 0);
-
-                        //cycleParams.Clear();
-                        //cycleParams.AddRange(backupCycleParams);
-
                     }
                 }
             }
@@ -1069,6 +1081,50 @@ namespace VisualTemplate
 
             s.Add(new Property("1", "UInt4", "8"));
             ttp.TreeView.SelectedNode = ttp.TreeView.SelectedNode.LastNode;
+        }
+
+        private static void removeVariant(Cycle c)
+        {
+            foreach (Variant v in c.Variatns)
+            {
+                if (v.Value.IndexOf("%") >= 0)
+                {
+                    c.Variatns.Remove(v);
+                    removeVariant(c);
+                    return;
+                }
+            }
+        }
+
+        public static void updateVarsFromCsv(TempTabPage curTempTabPage, Cycle c)
+        {
+            removeVariant(c);
+            string[] headersArray = null;
+            try
+            {
+                CsvVar cv = curTempTabPage.Template.getCsvVar(c.csvVarFile);
+                using (StreamReader sr = new StreamReader(getCsvPath(cv, curTempTabPage.Template), cv.Encoding))
+                {
+                    string headers = sr.ReadLine();
+                    headersArray = headers.Split(cv.Separator);
+                }
+            }
+            catch (NullReferenceException)
+            {
+                return;
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
+            for (int k = 0;  k < headersArray.Length; k++)
+            {
+                c.Add(new Variant(headersArray[k], "%" + headersArray[k] + "%", ""));
+            }
+            
+
         }
 
         public static void addFolder(TempTabPage ttp)

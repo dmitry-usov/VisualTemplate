@@ -553,7 +553,7 @@
             this.SaveAsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.SaveAsToolStripButton.Name = "SaveAsToolStripButton";
             this.SaveAsToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.SaveAsToolStripButton.Text = "&Print";
+            this.SaveAsToolStripButton.Text = "&SaveAs";
             // 
             // closeToolStripButton
             // 
@@ -562,7 +562,7 @@
             this.closeToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.closeToolStripButton.Name = "closeToolStripButton";
             this.closeToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.closeToolStripButton.Text = "toolStripButton1";
+            this.closeToolStripButton.Text = "Close";
             this.closeToolStripButton.Click += new System.EventHandler(this.closeToolStripButton_Click);
             // 
             // toolStripSeparator
@@ -577,7 +577,7 @@
             this.outToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.outToolStripButton.Name = "outToolStripButton";
             this.outToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.outToolStripButton.Text = "C&ut";
+            this.outToolStripButton.Text = "Export";
             this.outToolStripButton.Click += new System.EventHandler(this.outToolStripButton_Click);
             // 
             // tabControl2
@@ -906,7 +906,7 @@
             this.AddToolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.AddToolStripDropDownButton1.Name = "AddToolStripDropDownButton1";
             this.AddToolStripDropDownButton1.Size = new System.Drawing.Size(29, 22);
-            this.AddToolStripDropDownButton1.Text = "toolStripDropDownButton1";
+            this.AddToolStripDropDownButton1.Text = "Add to Tree";
             // 
             // cycleToolStripMenuItem
             // 
@@ -939,7 +939,7 @@
             this.copyToolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.copyToolStripButton4.Name = "copyToolStripButton4";
             this.copyToolStripButton4.Size = new System.Drawing.Size(23, 22);
-            this.copyToolStripButton4.Text = "toolStripButton4";
+            this.copyToolStripButton4.Text = "Copy element";
             this.copyToolStripButton4.Click += new System.EventHandler(this.copyToolStripButton4_Click);
             // 
             // pastToolStripButton1
@@ -950,7 +950,7 @@
             this.pastToolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pastToolStripButton1.Name = "pastToolStripButton1";
             this.pastToolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.pastToolStripButton1.Text = "toolStripButton1";
+            this.pastToolStripButton1.Text = "Past element";
             this.pastToolStripButton1.Click += new System.EventHandler(this.pastToolStripButton1_Click);
             // 
             // dublToolStripButton3
@@ -961,7 +961,7 @@
             this.dublToolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.dublToolStripButton3.Name = "dublToolStripButton3";
             this.dublToolStripButton3.Size = new System.Drawing.Size(23, 22);
-            this.dublToolStripButton3.Text = "toolStripButton3";
+            this.dublToolStripButton3.Text = "Dublicate";
             // 
             // deleteToolStripButton2
             // 
@@ -970,7 +970,7 @@
             this.deleteToolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deleteToolStripButton2.Name = "deleteToolStripButton2";
             this.deleteToolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.deleteToolStripButton2.Text = "toolStripButton2";
+            this.deleteToolStripButton2.Text = "Delete";
             this.deleteToolStripButton2.Click += new System.EventHandler(this.deleteToolStripButton2_Click);
             // 
             // toolStrip3
@@ -985,7 +985,7 @@
             this.toolStripButton3});
             this.toolStrip3.Location = new System.Drawing.Point(320, 24);
             this.toolStrip3.Name = "toolStrip3";
-            this.toolStrip3.Size = new System.Drawing.Size(178, 25);
+            this.toolStrip3.Size = new System.Drawing.Size(147, 25);
             this.toolStrip3.TabIndex = 0;
             // 
             // toolStripLabel1
@@ -1001,7 +1001,7 @@
             this.addPropToolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addPropToolStripButton1.Name = "addPropToolStripButton1";
             this.addPropToolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.addPropToolStripButton1.Text = "toolStripButton1";
+            this.addPropToolStripButton1.Text = "Add Prop";
             this.addPropToolStripButton1.Click += new System.EventHandler(this.addPropToolStripButton1_Click);
             // 
             // toolStripButton1
@@ -1012,7 +1012,7 @@
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Text = "Del prop";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripButton2
@@ -1023,7 +1023,7 @@
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton2.Text = "toolStripButton2";
+            this.toolStripButton2.Text = "Copy prop";
             this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // toolStripButton3
@@ -1034,7 +1034,7 @@
             this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton3.Name = "toolStripButton3";
             this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton3.Text = "toolStripButton3";
+            this.toolStripButton3.Text = "Past prop";
             this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
             // 
             // MainForm
