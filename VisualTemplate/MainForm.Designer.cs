@@ -36,31 +36,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
-            this.bt_Open = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.bt_getCsv = new System.Windows.Forms.Button();
-            this.bt_reloadTr = new System.Windows.Forms.Button();
-            this.bt_AddSignal = new System.Windows.Forms.Button();
-            this.bt_Delete = new System.Windows.Forms.Button();
-            this.bt_Past = new System.Windows.Forms.Button();
-            this.bt_Copy = new System.Windows.Forms.Button();
-            this.bt_AddCycle = new System.Windows.Forms.Button();
-            this.dataGridVariants = new System.Windows.Forms.DataGridView();
-            this.button2 = new System.Windows.Forms.Button();
-            this.dataGridSettings = new System.Windows.Forms.DataGridView();
-            this.bt_Save = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.bt_AddPoV = new System.Windows.Forms.Button();
-            this.bt_DeletePoV = new System.Windows.Forms.Button();
-            this.bt_PastLink = new System.Windows.Forms.Button();
-            this.bt_CopyProp = new System.Windows.Forms.Button();
-            this.bt_PastProp = new System.Windows.Forms.Button();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.button3 = new System.Windows.Forms.Button();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.treeView1 = new System.Windows.Forms.TreeView();
-            this.dataGridProps = new System.Windows.Forms.DataGridView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.newToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -70,7 +45,6 @@
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.outToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.tabControl2 = new System.Windows.Forms.TabControl();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -119,20 +93,21 @@
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.treeMasterView = new System.Windows.Forms.TreeView();
+            this.button1 = new System.Windows.Forms.Button();
+            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.ctx_treeView.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridVariants)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridSettings)).BeginInit();
-            this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridProps)).BeginInit();
             this.toolStrip1.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.toolStrip3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ctx_treeView
@@ -147,7 +122,6 @@
             this.ctx_copyPath.Name = "ctx_copyPath";
             this.ctx_copyPath.Size = new System.Drawing.Size(166, 22);
             this.ctx_copyPath.Text = "Копировать путь";
-            this.ctx_copyPath.Click += new System.EventHandler(this.ctx_copyPath_Click);
             // 
             // imageListForTree
             // 
@@ -186,317 +160,14 @@
             // 
             // toolStripContainer1.ContentPanel
             // 
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1032, 0);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1034, 0);
             this.toolStripContainer1.LeftToolStripPanelVisible = false;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 27);
             this.toolStripContainer1.Name = "toolStripContainer1";
             this.toolStripContainer1.RightToolStripPanelVisible = false;
-            this.toolStripContainer1.Size = new System.Drawing.Size(1032, 23);
+            this.toolStripContainer1.Size = new System.Drawing.Size(1034, 23);
             this.toolStripContainer1.TabIndex = 25;
             this.toolStripContainer1.Text = "toolStripContainer1";
-            // 
-            // bt_Open
-            // 
-            this.bt_Open.Location = new System.Drawing.Point(58, 554);
-            this.bt_Open.Name = "bt_Open";
-            this.bt_Open.Size = new System.Drawing.Size(75, 23);
-            this.bt_Open.TabIndex = 2;
-            this.bt_Open.Text = "Open";
-            this.bt_Open.UseVisualStyleBackColor = true;
-            this.bt_Open.Click += new System.EventHandler(this.bt_Open_Click);
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(409, 306);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(550, 224);
-            this.tabControl1.TabIndex = 20;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.bt_getCsv);
-            this.tabPage1.Controls.Add(this.bt_reloadTr);
-            this.tabPage1.Controls.Add(this.bt_AddSignal);
-            this.tabPage1.Controls.Add(this.bt_Delete);
-            this.tabPage1.Controls.Add(this.bt_Past);
-            this.tabPage1.Controls.Add(this.bt_Copy);
-            this.tabPage1.Controls.Add(this.bt_AddCycle);
-            this.tabPage1.Controls.Add(this.dataGridVariants);
-            this.tabPage1.Controls.Add(this.button2);
-            this.tabPage1.Controls.Add(this.dataGridSettings);
-            this.tabPage1.Controls.Add(this.bt_Save);
-            this.tabPage1.Controls.Add(this.button1);
-            this.tabPage1.Controls.Add(this.bt_AddPoV);
-            this.tabPage1.Controls.Add(this.bt_DeletePoV);
-            this.tabPage1.Controls.Add(this.bt_PastLink);
-            this.tabPage1.Controls.Add(this.bt_CopyProp);
-            this.tabPage1.Controls.Add(this.bt_PastProp);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(542, 198);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // bt_getCsv
-            // 
-            this.bt_getCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bt_getCsv.Location = new System.Drawing.Point(407, 112);
-            this.bt_getCsv.Name = "bt_getCsv";
-            this.bt_getCsv.Size = new System.Drawing.Size(75, 23);
-            this.bt_getCsv.TabIndex = 10;
-            this.bt_getCsv.Text = "getCSV";
-            this.bt_getCsv.UseVisualStyleBackColor = true;
-            this.bt_getCsv.Click += new System.EventHandler(this.bt_getCsv_Click);
-            // 
-            // bt_reloadTr
-            // 
-            this.bt_reloadTr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_reloadTr.Location = new System.Drawing.Point(249, 141);
-            this.bt_reloadTr.Name = "bt_reloadTr";
-            this.bt_reloadTr.Size = new System.Drawing.Size(75, 23);
-            this.bt_reloadTr.TabIndex = 17;
-            this.bt_reloadTr.Text = "RelaodTree";
-            this.bt_reloadTr.UseVisualStyleBackColor = true;
-            this.bt_reloadTr.Click += new System.EventHandler(this.bt_reloadTr_Click);
-            // 
-            // bt_AddSignal
-            // 
-            this.bt_AddSignal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_AddSignal.Location = new System.Drawing.Point(6, 170);
-            this.bt_AddSignal.Name = "bt_AddSignal";
-            this.bt_AddSignal.Size = new System.Drawing.Size(75, 23);
-            this.bt_AddSignal.TabIndex = 6;
-            this.bt_AddSignal.Text = "Add Signal";
-            this.bt_AddSignal.UseVisualStyleBackColor = true;
-            this.bt_AddSignal.Click += new System.EventHandler(this.bt_AddSignal_Click);
-            // 
-            // bt_Delete
-            // 
-            this.bt_Delete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_Delete.Location = new System.Drawing.Point(168, 169);
-            this.bt_Delete.Name = "bt_Delete";
-            this.bt_Delete.Size = new System.Drawing.Size(75, 23);
-            this.bt_Delete.TabIndex = 5;
-            this.bt_Delete.Text = "Delete";
-            this.bt_Delete.UseVisualStyleBackColor = true;
-            this.bt_Delete.Click += new System.EventHandler(this.bt_Delete_Click);
-            // 
-            // bt_Past
-            // 
-            this.bt_Past.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_Past.Location = new System.Drawing.Point(168, 141);
-            this.bt_Past.Name = "bt_Past";
-            this.bt_Past.Size = new System.Drawing.Size(75, 23);
-            this.bt_Past.TabIndex = 12;
-            this.bt_Past.Text = "Past";
-            this.bt_Past.UseVisualStyleBackColor = true;
-            this.bt_Past.Click += new System.EventHandler(this.bt_Past_Click);
-            // 
-            // bt_Copy
-            // 
-            this.bt_Copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_Copy.Location = new System.Drawing.Point(87, 172);
-            this.bt_Copy.Name = "bt_Copy";
-            this.bt_Copy.Size = new System.Drawing.Size(75, 23);
-            this.bt_Copy.TabIndex = 11;
-            this.bt_Copy.Text = "Copy";
-            this.bt_Copy.UseVisualStyleBackColor = true;
-            this.bt_Copy.Click += new System.EventHandler(this.bt_Copy_Click);
-            // 
-            // bt_AddCycle
-            // 
-            this.bt_AddCycle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bt_AddCycle.Location = new System.Drawing.Point(87, 141);
-            this.bt_AddCycle.Name = "bt_AddCycle";
-            this.bt_AddCycle.Size = new System.Drawing.Size(75, 23);
-            this.bt_AddCycle.TabIndex = 4;
-            this.bt_AddCycle.Text = "Add Cycle";
-            this.bt_AddCycle.UseVisualStyleBackColor = true;
-            this.bt_AddCycle.Click += new System.EventHandler(this.bt_AddCycle_Click);
-            // 
-            // dataGridVariants
-            // 
-            this.dataGridVariants.AllowUserToAddRows = false;
-            this.dataGridVariants.AllowUserToDeleteRows = false;
-            this.dataGridVariants.AllowUserToResizeRows = false;
-            this.dataGridVariants.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.dataGridVariants.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.dataGridVariants.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridVariants.Location = new System.Drawing.Point(586, -35);
-            this.dataGridVariants.MultiSelect = false;
-            this.dataGridVariants.Name = "dataGridVariants";
-            this.dataGridVariants.RowHeadersVisible = false;
-            this.dataGridVariants.Size = new System.Drawing.Size(237, 107);
-            this.dataGridVariants.TabIndex = 16;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(783, 226);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 19;
-            this.button2.Text = "PastVars";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // dataGridSettings
-            // 
-            this.dataGridSettings.AllowUserToAddRows = false;
-            this.dataGridSettings.AllowUserToDeleteRows = false;
-            this.dataGridSettings.AllowUserToResizeRows = false;
-            this.dataGridSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.dataGridSettings.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.dataGridSettings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridSettings.Location = new System.Drawing.Point(306, -35);
-            this.dataGridSettings.MultiSelect = false;
-            this.dataGridSettings.Name = "dataGridSettings";
-            this.dataGridSettings.RowHeadersVisible = false;
-            this.dataGridSettings.Size = new System.Drawing.Size(237, 107);
-            this.dataGridSettings.TabIndex = 8;
-            this.dataGridSettings.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
-            // 
-            // bt_Save
-            // 
-            this.bt_Save.Location = new System.Drawing.Point(6, 272);
-            this.bt_Save.Name = "bt_Save";
-            this.bt_Save.Size = new System.Drawing.Size(75, 23);
-            this.bt_Save.TabIndex = 3;
-            this.bt_Save.Text = "Save";
-            this.bt_Save.UseVisualStyleBackColor = true;
-            this.bt_Save.Click += new System.EventHandler(this.bt_Save_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(702, 226);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 18;
-            this.button1.Text = "CopyVars";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // bt_AddPoV
-            // 
-            this.bt_AddPoV.Location = new System.Drawing.Point(287, 226);
-            this.bt_AddPoV.Name = "bt_AddPoV";
-            this.bt_AddPoV.Size = new System.Drawing.Size(75, 23);
-            this.bt_AddPoV.TabIndex = 7;
-            this.bt_AddPoV.Text = "Add";
-            this.bt_AddPoV.UseVisualStyleBackColor = true;
-            this.bt_AddPoV.Click += new System.EventHandler(this.bt_AddPoV_Click);
-            // 
-            // bt_DeletePoV
-            // 
-            this.bt_DeletePoV.Location = new System.Drawing.Point(368, 226);
-            this.bt_DeletePoV.Name = "bt_DeletePoV";
-            this.bt_DeletePoV.Size = new System.Drawing.Size(75, 23);
-            this.bt_DeletePoV.TabIndex = 9;
-            this.bt_DeletePoV.Text = "Delete";
-            this.bt_DeletePoV.UseVisualStyleBackColor = true;
-            this.bt_DeletePoV.Click += new System.EventHandler(this.bt_DeletePoV_Click);
-            // 
-            // bt_PastLink
-            // 
-            this.bt_PastLink.Location = new System.Drawing.Point(621, 226);
-            this.bt_PastLink.Name = "bt_PastLink";
-            this.bt_PastLink.Size = new System.Drawing.Size(75, 23);
-            this.bt_PastLink.TabIndex = 15;
-            this.bt_PastLink.Text = "Past Link";
-            this.bt_PastLink.UseVisualStyleBackColor = true;
-            this.bt_PastLink.Click += new System.EventHandler(this.bt_PastLink_Click);
-            // 
-            // bt_CopyProp
-            // 
-            this.bt_CopyProp.Location = new System.Drawing.Point(459, 226);
-            this.bt_CopyProp.Name = "bt_CopyProp";
-            this.bt_CopyProp.Size = new System.Drawing.Size(75, 23);
-            this.bt_CopyProp.TabIndex = 13;
-            this.bt_CopyProp.Text = "Copy";
-            this.bt_CopyProp.UseVisualStyleBackColor = true;
-            this.bt_CopyProp.Click += new System.EventHandler(this.bt_CopyProp_Click);
-            // 
-            // bt_PastProp
-            // 
-            this.bt_PastProp.Location = new System.Drawing.Point(540, 226);
-            this.bt_PastProp.Name = "bt_PastProp";
-            this.bt_PastProp.Size = new System.Drawing.Size(75, 23);
-            this.bt_PastProp.TabIndex = 14;
-            this.bt_PastProp.Text = "Past";
-            this.bt_PastProp.UseVisualStyleBackColor = true;
-            this.bt_PastProp.Click += new System.EventHandler(this.bt_PastProp_Click);
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(542, 198);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(399, 10);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 22;
-            this.button3.Text = "button3";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 39.5F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60.5F));
-            this.tableLayoutPanel1.Controls.Add(this.treeView1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.dataGridProps, 1, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(443, 47);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90.47619F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.523809F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(463, 253);
-            this.tableLayoutPanel1.TabIndex = 20;
-            // 
-            // treeView1
-            // 
-            this.treeView1.ContextMenuStrip = this.ctx_treeView;
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.HideSelection = false;
-            this.treeView1.ImageIndex = 13;
-            this.treeView1.ImageList = this.imageListForTree;
-            this.treeView1.Location = new System.Drawing.Point(4, 4);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.PathSeparator = ".";
-            this.treeView1.SelectedImageIndex = 13;
-            this.treeView1.Size = new System.Drawing.Size(175, 220);
-            this.treeView1.TabIndex = 0;
-            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
-            this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeView1_KeyDown);
-            // 
-            // dataGridProps
-            // 
-            this.dataGridProps.AllowUserToAddRows = false;
-            this.dataGridProps.AllowUserToDeleteRows = false;
-            this.dataGridProps.AllowUserToResizeRows = false;
-            this.dataGridProps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridProps.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.dataGridProps.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridProps.Location = new System.Drawing.Point(186, 4);
-            this.dataGridProps.MultiSelect = false;
-            this.dataGridProps.Name = "dataGridProps";
-            this.dataGridProps.RowHeadersVisible = false;
-            this.dataGridProps.Size = new System.Drawing.Size(273, 172);
-            this.dataGridProps.TabIndex = 1;
-            this.dataGridProps.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridProps_CellEndEdit);
-            this.dataGridProps.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
-            this.dataGridProps.LocationChanged += new System.EventHandler(this.LastColumnComboSelectionChanged);
             // 
             // toolStrip1
             // 
@@ -508,10 +179,11 @@
             this.SaveAsToolStripButton,
             this.closeToolStripButton,
             this.toolStripSeparator,
-            this.outToolStripButton});
+            this.outToolStripButton,
+            this.toolStripButton4});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(156, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(210, 25);
             this.toolStrip1.TabIndex = 24;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -585,31 +257,20 @@
             this.tabControl2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl2.Location = new System.Drawing.Point(3, 52);
+            this.tabControl2.Location = new System.Drawing.Point(15, 3);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(1029, 503);
+            this.tabControl2.Size = new System.Drawing.Size(865, 498);
             this.tabControl2.TabIndex = 21;
             this.tabControl2.SelectedIndexChanged += new System.EventHandler(this.tabControl2_SelectedIndexChanged);
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.tableLayoutPanel1);
-            this.panel1.Controls.Add(this.button3);
-            this.panel1.Controls.Add(this.tabControl1);
-            this.panel1.Controls.Add(this.bt_Open);
-            this.panel1.Location = new System.Drawing.Point(341, 185);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1032, 580);
-            this.panel1.TabIndex = 22;
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 558);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 559);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1032, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1034, 22);
             this.statusStrip1.TabIndex = 26;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -628,7 +289,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1032, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1034, 24);
             this.menuStrip1.TabIndex = 27;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -884,7 +545,7 @@
             this.pastToolStripButton1,
             this.dublToolStripButton3,
             this.deleteToolStripButton2});
-            this.toolStrip2.Location = new System.Drawing.Point(156, 24);
+            this.toolStrip2.Location = new System.Drawing.Point(179, 24);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Size = new System.Drawing.Size(165, 25);
             this.toolStrip2.TabIndex = 0;
@@ -983,7 +644,7 @@
             this.toolStripButton1,
             this.toolStripButton2,
             this.toolStripButton3});
-            this.toolStrip3.Location = new System.Drawing.Point(320, 24);
+            this.toolStrip3.Location = new System.Drawing.Point(344, 24);
             this.toolStrip3.Name = "toolStrip3";
             this.toolStrip3.Size = new System.Drawing.Size(147, 25);
             this.toolStrip3.TabIndex = 0;
@@ -1037,17 +698,66 @@
             this.toolStripButton3.Text = "Past prop";
             this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(0, 52);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.treeMasterView);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.button1);
+            this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
+            this.splitContainer1.Size = new System.Drawing.Size(1034, 504);
+            this.splitContainer1.SplitterDistance = 147;
+            this.splitContainer1.TabIndex = 28;
+            // 
+            // treeMasterView
+            // 
+            this.treeMasterView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeMasterView.Location = new System.Drawing.Point(0, 0);
+            this.treeMasterView.Name = "treeMasterView";
+            this.treeMasterView.Size = new System.Drawing.Size(147, 504);
+            this.treeMasterView.TabIndex = 0;
+            this.treeMasterView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.treeMasterView_MouseDoubleClick);
+            // 
+            // button1
+            // 
+            this.button1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.button1.Location = new System.Drawing.Point(0, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(16, 504);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "<";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // toolStripButton4
+            // 
+            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
+            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton4.Name = "toolStripButton4";
+            this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton4.Text = "ExportAll";
+            this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1032, 580);
+            this.ClientSize = new System.Drawing.Size(1034, 581);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip3);
             this.Controls.Add(this.toolStrip2);
-            this.Controls.Add(this.tabControl2);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.toolStripContainer1);
             this.MainMenuStrip = this.menuStrip1;
@@ -1057,15 +767,8 @@
             this.ctx_treeView.ResumeLayout(false);
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridVariants)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridSettings)).EndInit();
-            this.tableLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridProps)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.panel1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -1074,6 +777,10 @@
             this.toolStrip2.PerformLayout();
             this.toolStrip3.ResumeLayout(false);
             this.toolStrip3.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1086,33 +793,7 @@
         private System.Windows.Forms.ToolStripMenuItem ctx_copyPath;
         private System.Windows.Forms.ImageList imageListForTree;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TabControl tabControl2;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.DataGridView dataGridProps;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.Button bt_getCsv;
-        private System.Windows.Forms.Button bt_reloadTr;
-        private System.Windows.Forms.Button bt_AddSignal;
-        private System.Windows.Forms.Button bt_Delete;
-        private System.Windows.Forms.Button bt_Past;
-        private System.Windows.Forms.Button bt_Copy;
-        private System.Windows.Forms.Button bt_AddCycle;
-        private System.Windows.Forms.DataGridView dataGridVariants;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.DataGridView dataGridSettings;
-        private System.Windows.Forms.Button bt_Save;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button bt_AddPoV;
-        private System.Windows.Forms.Button bt_DeletePoV;
-        private System.Windows.Forms.Button bt_PastLink;
-        private System.Windows.Forms.Button bt_CopyProp;
-        private System.Windows.Forms.Button bt_PastProp;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Button bt_Open;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton newToolStripButton;
         private System.Windows.Forms.ToolStripButton openToolStripButton;
@@ -1169,6 +850,10 @@
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TreeView treeMasterView;
+        private System.Windows.Forms.ToolStripButton toolStripButton4;
     }
 }
 

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace VisualTemplate
 {
-    class TempTabPage
+   public class TempTabPage
     {
         public TabPage TabPage { get; set; }
         public TreeView TreeView { get; set; }
@@ -19,6 +19,10 @@ namespace VisualTemplate
         public int Id { get; set; }
         public bool Changed { get; set; }
         
+        public TempTabPage()
+        {
+
+        }
 
         public TempTabPage(string str)
         {

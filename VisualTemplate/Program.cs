@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Xml.Serialization;
 
 namespace VisualTemplate
 {
@@ -21,6 +21,7 @@ namespace VisualTemplate
 
         static private string _curDir = Directory.GetCurrentDirectory();
         static public Dictionary<int,TempTabPage> TemplatesPages;
+        static public Master MasterFile;
 
 
         static string templateFilePath = _curDir;
@@ -51,7 +52,8 @@ namespace VisualTemplate
         {
             
             TemplatesPages = new Dictionary<int, TempTabPage>();
-
+           MasterFile = new Master() ;
+            //MasterFile.Files.Add("diag");
             //НЕОПТИМИЗИРОВАННОЕ ГОВНО ДАЛЕЕ
 
 
@@ -63,9 +65,28 @@ namespace VisualTemplate
             VariantsDic = new Dictionary<string, Variant>();
             setDic();
 
+
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
+        }
+
+        public static void newMaster(TreeView trV)
+        {
+            MasterFile = new Master() { Name = "new"};
+
+        }
+
+        internal static void openMaster(TreeView trV)
+        {
+            trV.Nodes.Clear();
+            trV.Nodes.Add(MasterFile.Name);
+            if (MasterFile.Files is null) return;
+            foreach (TempTabPage tmp in MasterFile.tempTabPagesDic.Values)
+            {
+                trV.Nodes[0].Nodes.Add(tmp.Id.ToString(), tmp.Template.Name);
+            }
         }
 
         //Создание новго теплейта
@@ -166,13 +187,9 @@ namespace VisualTemplate
             //}
         }
 
-        public static bool loadTemplate(OpenFileDialog op, TempTabPage opTmp)
+        public static void loadTemplate(OpenFileDialog op, TempTabPage opTmp)
         {
-            op.Filter = "json files (*.json)|*.json|All files (*.*)|*.*";
-            if (op.ShowDialog() == DialogResult.Cancel)
-            {
-                return false;
-            }
+
             Cursor.Current = Cursors.WaitCursor;
             opTmp.TreeView.Nodes.Clear();
            // templateElements.Clear();
@@ -188,6 +205,28 @@ namespace VisualTemplate
             // trVi.ExpandAll();
             sr.Close();
             defaultPathJson = Path.GetDirectoryName(op.FileName);
+            Cursor.Current = Cursors.Default;
+        }
+
+        public static bool loadTemplate(string FileName, TempTabPage opTmp)
+        {
+            FileInfo fi = new FileInfo(FileName);
+            if (!fi.Exists) return false;
+            Cursor.Current = Cursors.WaitCursor;
+            opTmp.TreeView.Nodes.Clear();
+            // templateElements.Clear();
+            var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var sr = new StreamReader(fs);
+            string jsonStr = sr.ReadToEnd();
+            opTmp.Template = JsonConvert.DeserializeObject<Template>(jsonStr);
+            opTmp.Template.CurPath = FileName;
+            RestoreParentsInTemplate(opTmp.Template);
+
+            addToTree(opTmp.Template, opTmp.TreeView, opTmp.Id);
+            //opTmp.TreeView.Nodes[0].Expand();
+            // trVi.ExpandAll();
+            sr.Close();
+            defaultPathJson = Path.GetDirectoryName(FileName);
             Cursor.Current = Cursors.Default;
             return true;
         }
@@ -1141,6 +1180,15 @@ namespace VisualTemplate
             ttp.TreeView.SelectedNode.Nodes.Add(s.Id, s.ToString(), 0);
             ttp.Elements.Add(s);
             ttp.TreeView.SelectedNode = ttp.TreeView.SelectedNode.LastNode;
+        }
+
+        internal static void saveMaster(string fileName)
+        {
+            XmlSerializer formatter = new XmlSerializer(typeof(Master));
+            using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, MasterFile);
+            }
         }
 
         public static void RestoreLinks(Cycle c)

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace VisualTemplate
 {
 
-    class Signal : Element, ICloneable
+    public class Signal : Element, ICloneable
     {
 
         [JsonIgnore]

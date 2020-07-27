@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace VisualTemplate 
 {
-    class Cycle : Element, ICloneable
+    public class Cycle : Element, ICloneable
     {
         public List<Variant> Variatns { get; set; }
 

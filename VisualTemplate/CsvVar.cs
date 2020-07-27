@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VisualTemplate
 {
-    class CsvVar
+   public class CsvVar
     {
         private string _path;
         public string Name { get; set; }

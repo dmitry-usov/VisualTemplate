@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace VisualTemplate
 {
-    class Template
+   public  class Template
     {
         private ArrayList _elements;
         

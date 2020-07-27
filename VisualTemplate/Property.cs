@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VisualTemplate
 {
-    class Property: ICloneable
+   public class Property: ICloneable
     {
         private string _id;
         public string Id

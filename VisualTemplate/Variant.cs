@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VisualTemplate
 {
-    class Variant : ICloneable
+   public class Variant : ICloneable
     {
         private string _value;
         public string Name { get; set; }
