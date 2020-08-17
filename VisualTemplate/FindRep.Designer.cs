@@ -94,6 +94,7 @@
             this.Name = "FindRep";
             this.Text = "FindRep";
             this.TopMost = true;
+            this.Load += new System.EventHandler(this.FindRep_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -15,7 +15,7 @@ namespace VisualTemplate
 {
     public partial class MainForm : Form
     {
-        private TempTabPage curTempTabPage;
+        public TempTabPage curTempTabPage;
         public MainForm()
         {
             InitializeComponent();
@@ -223,11 +223,16 @@ namespace VisualTemplate
             curTempTabPage.dgSettings.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
             curTempTabPage.dgProps.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridProps_CellEndEdit);
             curTempTabPage.dgSettings.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSettings_CellClick);
+            curTempTabPage.dgProps.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellClick);
             curTempTabPage.dgProps.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
             curTempTabPage.dgProps.LocationChanged += new System.EventHandler(this.LastColumnComboSelectionChanged);
             curTempTabPage.TreeView.ImageList = imageListForTree;
             tabControl2.SelectedIndex = curTempTabPage.Id;
             toolStripStatusLabel1.Text = Program.TemplatesPages.Count.ToString();
+            curTempTabPage.dgVariants.Columns.Add("Name", "Name");
+            curTempTabPage.dgVariants.Columns.Add("Value", "Value");
+
+
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -261,6 +266,8 @@ namespace VisualTemplate
                 Cycle c = obj as Cycle;
                 Program.getSettings(c, curTmp);
                 Program.getVariants(c, curTmp.dgProps);
+
+                curTempTabPage.dgVariants.Rows.Clear();
 
                 if (c.Variatns.Count > 0)
                 {
@@ -304,6 +311,10 @@ namespace VisualTemplate
                 Program.getSettings(s, TrNdSel, curTmp.dgSettings);
                 Program.getProperties(s, curTmp.dgProps, TrNdSel);
 
+
+              //  if (curTempTabPage.dgVariants.Rows.Count < 1)
+                    Program.getVariantsToAdd(s, curTempTabPage);
+
                 if (s.Properties.Count > 0)
                 {
                     toolStripButton1.Enabled = true;
@@ -314,6 +325,8 @@ namespace VisualTemplate
                     toolStripButton1.Enabled = false;
                     toolStripButton2.Enabled = false;
                 }
+
+
 
                 //dataGridVariants.Columns.Clear();
                 //dataGridVariants.Columns.Add("Name", "Name");
@@ -341,13 +354,20 @@ namespace VisualTemplate
                 curTmp.dgProps.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
                 curTmp.dgProps.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
                 curTmp.dgProps.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+               
                 DataGridViewComboBoxColumn EncType = new DataGridViewComboBoxColumn();
+                
                 EncType.Items.Add("ASCII");
                 EncType.Items.Add("Default");
                 EncType.Items.Add("UTF8");
                 EncType.HeaderText = "Кодировка";
                 curTmp.dgProps.Columns.Add(EncType);
                 curTmp.dgProps.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+                curTmp.dgProps.Columns.Add(new DataGridViewButtonColumn() { Text = "Edit", UseColumnTextForButtonValue = true });
+                curTmp.dgProps.Columns[4].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+                curTempTabPage.dgVariants.Rows.Clear();
 
                 if (t.CsvVars.Count > 0)
                 {
@@ -955,6 +975,20 @@ namespace VisualTemplate
             Program.getVariants(el as Cycle, curTempTabPage.dgProps);
         }
 
+        private void dgProps_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex != 4) return;
+            string csvName = curTempTabPage.dgProps.Rows[e.RowIndex].Cells[0].Value.ToString();
+            
+
+            new CSVEdit(curTempTabPage, csvName);
+
+
+            //Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
+            //Program.updateVarsFromCsv(curTempTabPage, el as Cycle);
+            //Program.getVariants(el as Cycle, curTempTabPage.dgProps);
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if(splitContainer1.Panel1Collapsed)
@@ -1014,6 +1048,11 @@ namespace VisualTemplate
             sw.Close();
             Program.defaultPathOutCsv = Path.GetDirectoryName(saveFileDialog1.FileName);
             
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

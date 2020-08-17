@@ -35,6 +35,21 @@ namespace VisualTemplate
         }
 
         [JsonIgnore]
+        public bool HasVariants
+        {
+            get
+            {
+                if (Variatns.Count > 0)
+                {
+                    return true;
+                }
+                {
+                    return false;
+                }
+            }
+        }
+
+        [JsonIgnore]
         public bool isGoOn {
             get
             {

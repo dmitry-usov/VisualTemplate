@@ -30,5 +30,10 @@ namespace VisualTemplate
             MessageBox.Show("Замена выполнена!");
            
         }
+
+        private void FindRep_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

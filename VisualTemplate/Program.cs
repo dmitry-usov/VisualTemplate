@@ -506,7 +506,7 @@ namespace VisualTemplate
                 return getParentCycle(el.Parent);
             }
         }
-        static string getCsvPath(CsvVar csv, Template t)
+       public static string getCsvPath(CsvVar csv, Template t)
         {
             if (csv is null) return null;
             if (csv.Path.IndexOf(@":\") > 0)
@@ -1065,9 +1065,12 @@ namespace VisualTemplate
                 trN.ImageIndex = 0;
                 trN.SelectedImageIndex = 0;
             }
+            int rInd = 0;
             foreach (Property p in s.Properties)
             {
                 dgV.Rows.Add(p.Id, p.Type,p.Value);
+                dgV.Rows[rInd].Cells[2].Value = p.Value;
+                rInd++;
                 if(!(trN is null) && p.Id == "1")
                 {
                         trN.ImageIndex = Service.getImgCodeById(p.Value);
@@ -1075,6 +1078,66 @@ namespace VisualTemplate
                 }
             }
         }
+
+        public static void getVariantsToAdd(Signal s, TempTabPage tmp)
+        {
+
+            tmp.dgVariants.Rows.Clear();
+            int r = 0;
+            Cycle c = getParentCycle(s);
+            bool one = false;
+
+
+            do
+            {
+                if (c.HasVariants)
+                {
+                    foreach (Variant v in c.Variatns)
+                    {
+                        tmp.dgVariants.Rows.Add();
+                        tmp.dgVariants.Rows[r].Cells[0].Value = v.Name;
+                        tmp.dgVariants.Rows[r].Cells[1].Value = v.Value;
+                        r++;
+                    }
+                }
+                c = getParentCycle(c);
+                if (c == null) return;
+
+                if (c.Parent == null & one == false)
+                {
+                    one = true;
+                }
+                else
+                {
+                    one = false;
+                }
+                
+            } while (c.Parent != null | one);
+
+
+            //while (c.Parent != null | one)
+            //{
+                
+            //    if (c.HasVariants)
+            //    {
+            //        foreach(Variant v in c.Variatns)
+            //        {
+            //            tmp.dgVariants.Rows.Add();
+            //            tmp.dgVariants.Rows[r].Cells[0].Value = v.Name;
+            //            tmp.dgVariants.Rows[r].Cells[1].Value = v.Value;
+            //            r++;
+            //        }
+            //    }
+            //    one = false;
+            //    c = getParentCycle(c);
+            //    if (c == null) return;
+            //}
+
+
+         
+        }
+
+        
 
         public static void getCsvVars (TempTabPage ttp)
         {
@@ -1209,6 +1272,8 @@ namespace VisualTemplate
             }
 
         }
+
+    
 
        // public static void addToTree(Element o, TreeNode tr, TreeNode parentTreeNode = null)
 

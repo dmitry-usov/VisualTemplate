@@ -14,6 +14,7 @@ namespace VisualTemplate
         public TreeView TreeView { get; set; }
         public DataGridView dgProps { get; set; }
         public DataGridView dgSettings { get; set; }
+        public DataGridView dgVariants { get; set; }
         public Template Template { get; set; }
         public ArrayList Elements;
         public int Id { get; set; }
@@ -62,10 +63,21 @@ namespace VisualTemplate
             };
             sp_TreeNdgv.Panel2.Controls.Add(sp_PropsNAddr);
 
+            //Создание сплитконтейнера для упоминаний перменных и для переменных 
+            SplitContainer sp_LinksNVariants = new SplitContainer()
+            {
+                Orientation = Orientation.Horizontal,
+                Dock = DockStyle.Fill,
+                BorderStyle = BorderStyle.FixedSingle,
+                SplitterDistance = 100,
+            };
+            sp_PropsNAddr.Panel2.Controls.Add(sp_LinksNVariants);
+
             //Дерево
             TreeView = new TreeView()
             {
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                HideSelection = false
             };
             sp_TreeNSet.Panel1.Controls.Add(TreeView);
 
@@ -77,7 +89,7 @@ namespace VisualTemplate
                 AllowUserToDeleteRows = false,
                 AllowUserToResizeRows = false,
                 MultiSelect = false,
-                RowHeadersVisible = false,
+                RowHeadersVisible = false
             };
             sp_TreeNSet.Panel2.Controls.Add(dgSettings);
 
@@ -89,9 +101,25 @@ namespace VisualTemplate
                 AllowUserToDeleteRows = false,
                 AllowUserToResizeRows = false,
                 MultiSelect = false,
-                RowHeadersVisible = false,
+                RowHeadersVisible = false
             };
             sp_PropsNAddr.Panel1.Controls.Add(dgProps);
+
+            //Датагрид для добавления перменных
+            dgVariants = new DataGridView()
+            {
+                Dock = DockStyle.Fill,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                AllowUserToResizeRows = false,
+                MultiSelect = false,
+                RowHeadersVisible = false,
+                ReadOnly = true,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect
+            };
+            sp_LinksNVariants.Panel1.Controls.Add(dgVariants);
+
+
 
             Template = new Template(str);
         }

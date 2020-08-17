@@ -77,6 +77,7 @@ namespace VisualTemplate
             {
                 if (name == sv.Name) return sv;
             }
+            
             return null;
         }
     }
