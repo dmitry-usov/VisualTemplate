@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace VisualTemplate
 
         public string csvText;
         CsvVar csv;
+        TempTabPage tmtp;
         public CSVEdit()
         {
             InitializeComponent();            
@@ -23,22 +25,24 @@ namespace VisualTemplate
 
         public CSVEdit(TempTabPage tmp, string csvName)
         {
+            tmtp = tmp;
             InitializeComponent();
-            loadCsv(tmp, csvName);
+            loadCsv( csvName);
             richTextBox1.Text = csvText;
+            if (csvText is null) return;
             toDataGrid();
             tabControl1.SelectedIndex = 0;
             Show();
         }
 
-        void loadCsv(TempTabPage tmp, string csvName)
+        void loadCsv(string csvName)
         {
 
-            csv = tmp.Template.getCsvVar(csvName);
+            csv = tmtp.Template.getCsvVar(csvName);
 
             try
             {
-                using (StreamReader sr = new StreamReader(Program.getCsvPath(csv, tmp.Template), csv.Encoding))
+                using (StreamReader sr = new StreamReader(Program.getCsvPath(csv, tmtp.Template), csv.Encoding))
                 {
                     csvText = sr.ReadToEnd();
                 }
@@ -70,6 +74,14 @@ namespace VisualTemplate
                     dataGridView1.Rows[r].Cells[c].Value = readRowArray[c].Replace("\r","");
                 }
             }
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            ProcessStartInfo pci = new ProcessStartInfo("Excel.exe");
+            pci.Arguments =  '"'  + Program.getCsvPath(csv, tmtp.Template) + '"';
+            Process.Start(pci);
+            Close();
         }
     }
 }

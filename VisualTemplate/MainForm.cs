@@ -226,6 +226,7 @@ namespace VisualTemplate
             curTempTabPage.dgProps.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellClick);
             curTempTabPage.dgProps.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
             curTempTabPage.dgProps.LocationChanged += new System.EventHandler(this.LastColumnComboSelectionChanged);
+            curTempTabPage.dgVariants.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellDoubleClick);
             curTempTabPage.TreeView.ImageList = imageListForTree;
             tabControl2.SelectedIndex = curTempTabPage.Id;
             toolStripStatusLabel1.Text = Program.TemplatesPages.Count.ToString();
@@ -456,6 +457,15 @@ namespace VisualTemplate
             {
                 curTempTabPage.dgProps.Rows[currentcell.Y].Cells[1].Value = Program.TypeOfProperty[sendingCB.EditingControlFormattedValue.ToString()];
             }
+        }
+
+        private void CellDoubleClick(object sender, EventArgs e)
+        {
+            var currentcell = curTempTabPage.dgVariants.CurrentCellAddress;
+
+            string vNs = "$" + curTempTabPage.dgVariants.Rows[currentcell.Y].Cells[0].Value.ToString() + "$";
+
+            Clipboard.SetData(DataFormats.Text, (Object)vNs);
         }
 
         public void StartReplace(string str1, string str2)
@@ -771,6 +781,22 @@ namespace VisualTemplate
         {
             Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
             Element copyEl = null;
+
+            if(curTempTabPage.TreeView.SelectedNode.Name == "0")
+            {
+                if (Program.bufElem.GetType().ToString() == "VisualTemplate.Cycle")
+                {
+                    
+                    Cycle bc = Program.bufElem as Cycle;
+                    copyEl = (Cycle)bc.Clone();
+                    curTempTabPage.Template.Cycles.Add((Cycle)copyEl);
+                    
+                    Program.newVarsInDic((Cycle)copyEl);
+                    Program.addToTree(copyEl, curTempTabPage.TreeView, curTempTabPage.Id, curTempTabPage.TreeView.SelectedNode);
+                    curTempTabPage.TreeView.SelectedNode.Expand();
+                    return;
+                }
+            }
             //switch (el.GetType().ToString())
             //{
             //    case "VisualTemplate.Signal":
@@ -803,9 +829,11 @@ namespace VisualTemplate
                 el.Add((Cycle)copyEl);
                 Program.newVarsInDic((Cycle)copyEl);
             }
+            
+            Program.addToTree(copyEl, curTempTabPage.TreeView, curTempTabPage.Id, curTempTabPage.TreeView.SelectedNode);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+            // curTempTabPage.TreeView.SelectedNode = curTempTabPage.TreeView.SelectedNode.LastNode;
 
-              Program.addToTree(copyEl, curTempTabPage.TreeView, curTempTabPage.Id, curTempTabPage.TreeView.SelectedNode);
-            curTempTabPage.TreeView.SelectedNode = curTempTabPage.TreeView.SelectedNode.LastNode;
             // treeView1.Nodes.Clear();
             //  Program.addToTree(Program.t, treeView1);
             //   treeView1.Nodes[0].Expand();

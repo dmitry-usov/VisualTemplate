@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,7 +90,9 @@ namespace VisualTemplate
                 AllowUserToDeleteRows = false,
                 AllowUserToResizeRows = false,
                 MultiSelect = false,
-                RowHeadersVisible = false
+                RowHeadersVisible = false,
+                BackgroundColor = Color.White
+                
             };
             sp_TreeNSet.Panel2.Controls.Add(dgSettings);
 
@@ -101,7 +104,8 @@ namespace VisualTemplate
                 AllowUserToDeleteRows = false,
                 AllowUserToResizeRows = false,
                 MultiSelect = false,
-                RowHeadersVisible = false
+                RowHeadersVisible = false,
+                BackgroundColor = Color.White
             };
             sp_PropsNAddr.Panel1.Controls.Add(dgProps);
 
@@ -115,7 +119,8 @@ namespace VisualTemplate
                 MultiSelect = false,
                 RowHeadersVisible = false,
                 ReadOnly = true,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                BackgroundColor = Color.White
             };
             sp_LinksNVariants.Panel1.Controls.Add(dgVariants);
 

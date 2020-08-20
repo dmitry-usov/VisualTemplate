@@ -760,9 +760,10 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.toolStripContainer1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
-            this.Text = " ";
+            this.Text = " VisualTemplate";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ctx_treeView.ResumeLayout(false);
             this.toolStripContainer1.ResumeLayout(false);
