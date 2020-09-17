@@ -30,6 +30,7 @@ namespace VisualTemplate
 
         public static Dictionary<string, string> TypeOfProperty;
         public static Dictionary<int, string> Types;
+        public static Dictionary<string, string> CDTTypes;
 
         public static Dictionary<string, Variant> VariantsDic;
 
@@ -44,8 +45,8 @@ namespace VisualTemplate
         public static string globalCsvString ="";
 
         public static Template t;
-        
 
+        public static MainForm pMainForm;
 
         [STAThread]
         static void Main()
@@ -61,6 +62,7 @@ namespace VisualTemplate
             //t.Name = "new";
 
             TypeOfProperty = new Dictionary<string, string>();
+            CDTTypes = new Dictionary<string, string>();
             Types = new Dictionary<int, string>();
             VariantsDic = new Dictionary<string, Variant>();
             setDic();
@@ -69,7 +71,7 @@ namespace VisualTemplate
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Run(pMainForm = new MainForm());
         }
 
         public static void newMaster(TreeView trV)
@@ -1036,8 +1038,6 @@ namespace VisualTemplate
                     trN.SelectedImageIndex = Service.getImgCodeById(s.Properties[pNum].Value);
                 }
                 pNum++;
-                
-
             }
         }
 
@@ -1345,6 +1345,19 @@ namespace VisualTemplate
             Types.Add(12, "String");
             Types.Add(13, "Folder");
             Types.Add(14, "VAR");
+
+            CDTTypes.Add("1", "Int1");
+            CDTTypes.Add("3", "UInt1");
+            CDTTypes.Add("9", "Int2");
+            CDTTypes.Add("8", "UInt2");
+            CDTTypes.Add("7", "Int4");
+            CDTTypes.Add("6", "UInt4");
+            CDTTypes.Add("13", "Int8");
+            CDTTypes.Add("12", "UInt8");
+            CDTTypes.Add("14", "Float");
+            CDTTypes.Add("15", "Double");
+            CDTTypes.Add("5", "Bool");
+            CDTTypes.Add("17", "String");
         }
 
 

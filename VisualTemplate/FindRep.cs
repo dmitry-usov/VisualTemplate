@@ -35,5 +35,10 @@ namespace VisualTemplate
         {
 
         }
+
+        private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+
+        }
     }
 }

@@ -219,20 +219,62 @@ namespace VisualTemplate
             curTempTabPage.dgSettings.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
             curTempTabPage.dgSettings.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
             curTempTabPage.dgSettings.Columns[2].Width = 50;
+
+
             curTempTabPage.TreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             curTempTabPage.dgSettings.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
+            curTempTabPage.dgProps.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             curTempTabPage.dgProps.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridProps_CellEndEdit);
             curTempTabPage.dgSettings.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSettings_CellClick);
             curTempTabPage.dgProps.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellClick);
             curTempTabPage.dgProps.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
             curTempTabPage.dgProps.LocationChanged += new System.EventHandler(this.LastColumnComboSelectionChanged);
             curTempTabPage.dgVariants.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellDoubleClick);
+            curTempTabPage.dgProps.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellDoubleClick);
+
+
             curTempTabPage.TreeView.ImageList = imageListForTree;
             tabControl2.SelectedIndex = curTempTabPage.Id;
             toolStripStatusLabel1.Text = Program.TemplatesPages.Count.ToString();
             curTempTabPage.dgVariants.Columns.Add("Name", "Name");
             curTempTabPage.dgVariants.Columns.Add("Value", "Value");
 
+
+        }
+
+        private void dgProps_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var currentcell = curTempTabPage.dgProps.CurrentCellAddress;
+
+
+            if (curTempTabPage.TreeView.SelectedNode.Name == "0")
+            {
+
+            }
+            else
+            {
+                Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
+                if (el is null) return;
+                switch (el.GetType().ToString())
+                {
+                    case "VisualTemplate.Signal":
+                        Signal s = el as Signal;
+                        Property p = s.Properties[currentcell.Y];
+                        PropEdit pe = new PropEdit(p);
+                        //dataGridProps_CellEndEdit(curTempTabPage.dgProps,null);
+                        if (pe.ShowDialog(this) == DialogResult.OK);
+                            Program.getProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode);
+                        break;
+                    case "VisualTemplate.Cycle":
+
+                        break;
+                }
+            }
+
+
+            
+
+            string vNs = "$" + curTempTabPage.dgProps.Rows[currentcell.Y].Cells[0].Value.ToString() + "$";
 
         }
 
@@ -511,6 +553,7 @@ namespace VisualTemplate
 
         private void dataGridProps_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
+            curTempTabPage.dgProps.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellDoubleClick);
             if (curTempTabPage.TreeView.SelectedNode.Name == "0")
             {
                 Program.setCsvVarPath(curTempTabPage);
@@ -538,6 +581,11 @@ namespace VisualTemplate
                 curTempTabPage.TabPage.Text += "*";
                 curTempTabPage.Changed = true;
             }
+        }
+
+        private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            curTempTabPage.dgProps.CellDoubleClick -= new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellDoubleClick);
         }
 
         //private void bt_AddPoV_Click(object sender, EventArgs e)

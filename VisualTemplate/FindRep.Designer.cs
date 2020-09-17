@@ -33,12 +33,14 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.bt_Replace = new System.Windows.Forms.Button();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // bt_Close
             // 
             this.bt_Close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bt_Close.Location = new System.Drawing.Point(314, 129);
+            this.bt_Close.Location = new System.Drawing.Point(443, 306);
             this.bt_Close.Name = "bt_Close";
             this.bt_Close.Size = new System.Drawing.Size(75, 23);
             this.bt_Close.TabIndex = 1;
@@ -50,7 +52,7 @@
             // 
             this.bt_Find.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bt_Find.Enabled = false;
-            this.bt_Find.Location = new System.Drawing.Point(233, 129);
+            this.bt_Find.Location = new System.Drawing.Point(362, 306);
             this.bt_Find.Name = "bt_Find";
             this.bt_Find.Size = new System.Drawing.Size(75, 23);
             this.bt_Find.TabIndex = 2;
@@ -81,11 +83,21 @@
             this.bt_Replace.UseVisualStyleBackColor = true;
             this.bt_Replace.Click += new System.EventHandler(this.bt_Replace_Click);
             // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(149, 115);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(240, 150);
+            this.dataGridView1.TabIndex = 6;
+            this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
+            // 
             // FindRep
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(395, 159);
+            this.ClientSize = new System.Drawing.Size(524, 336);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.bt_Replace);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
@@ -95,6 +107,7 @@
             this.Text = "FindRep";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.FindRep_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -106,5 +119,6 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button bt_Replace;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
