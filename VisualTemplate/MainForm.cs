@@ -508,6 +508,7 @@ namespace VisualTemplate
             string vNs = "$" + curTempTabPage.dgVariants.Rows[currentcell.Y].Cells[0].Value.ToString() + "$";
 
             Clipboard.SetData(DataFormats.Text, (Object)vNs);
+            toolStripStatusLabel1.Text = vNs + " - готово для вставки";
         }
 
         public void StartReplace(string str1, string str2)
@@ -1026,6 +1027,7 @@ namespace VisualTemplate
         {
             saveFileDialog1.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
             if (!(Program.defaultPathOutCsv is null)) saveFileDialog1.InitialDirectory = Program.defaultPathOutCsv;
+            saveFileDialog1.FileName = curTempTabPage.Template.Name + "_out";
             if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
             {
                 return;
@@ -1105,6 +1107,7 @@ namespace VisualTemplate
  
             saveFileDialog1.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
             if (!(Program.defaultPathOutCsv is null)) saveFileDialog1.InitialDirectory = Program.defaultPathOutCsv;
+            saveFileDialog1.FileName = curTempTabPage.Template.Name + "_n_etc_out";
             if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
             {
                 return;

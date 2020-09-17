@@ -849,10 +849,13 @@ namespace VisualTemplate
                         //... перебираем и добавляем их в ...
                         foreach (Property p in sCh.Properties)
                         {
-                           // if (c.HasCsvString) c.CsvString += "\n";
+                            // if (c.HasCsvString) c.CsvString += "\n";
 
-                            if (p.Type == "String" && p.Value.Substring(0, 1) != "\"") p.Value = "\"" + p.Value + "\"";
-                            string csvStr = "\""+ sCh.FullPath +"\"" + "," + p.Id + "," + p.Type + "," + p.Value;
+                            // if (p.Type == "String" && p.Value.Substring(0, 1) != "\"") p.Value = "\"" + p.Value + "\"";
+
+                            // Проверяем на ковычки:
+                            
+                            string csvStr = "\""+ sCh.FullPath +"\"" + "," + p.Id + "," + p.Type + "," + getNormQuotes(p);
                         //    Console.WriteLine(csvStr);
                             
                             csvStr = replaceVariants(c, csvStr);
@@ -900,6 +903,32 @@ namespace VisualTemplate
             }
         }
 
+        private static string getNormQuotes(Property p)
+        {
+            string outStr = p.Value;
+            if (p.Type == "String" && outStr.Substring(0, 1) == "\"")
+            {
+                outStr =  outStr.Remove(0,1);
+                if (outStr.IndexOf("\"", outStr.Length - 1)> 0)
+                {
+                    outStr = outStr.Remove(outStr.Length-1);
+                }
+            }
+
+            if (p.Type == "String" && outStr != "" && outStr.IndexOf("\"",1) > 1 && outStr.IndexOf("\"", 1) != outStr.Length-1 && outStr.IndexOf("\"\"")<0)
+            {
+                outStr = outStr.Replace("\"","\"\"");
+                //outStr = outStr.Remove(0, 1);
+                //if (outStr.IndexOf("\"", outStr.Length - 1) > 0)
+                //{
+                //    outStr = outStr.Remove(outStr.Length - 1);
+                //}
+            }
+
+            if (p.Type == "String" && outStr.Substring(0, 1) != "\"") { outStr = "\"" + outStr + "\""; }
+
+            return outStr;
+        }
 
         private static string replaceParentVariant(string CsvStr, Signal sCh)
         {
