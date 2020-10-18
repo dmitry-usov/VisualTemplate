@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,9 @@ using System.Xml.Serialization;
 namespace VisualTemplate
 {
     public partial class MainForm : Form
+        
     {
+        private string oldFileName;
         public TempTabPage curTempTabPage;
         public MainForm()
         {
@@ -68,9 +71,8 @@ namespace VisualTemplate
 
         private void closeToolStripButton_Click(object sender, EventArgs e)
         {
-            if (curTempTabPage.Changed)
-            {
-                DialogResult res = MessageBox.Show(this, "Сохранить изменения перед закрытием?", "Сохранить?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                DialogResult res = MessageBox.Show(this, "Сохранить перед закрытием?", "Сохранить?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 switch (res)
                 {
                     case DialogResult.Yes:
@@ -81,7 +83,7 @@ namespace VisualTemplate
                     case DialogResult.Cancel:
                         return;
                 }
-            }
+            
 
             int removeIndex = tabControl2.SelectedIndex;
             if (removeIndex < 0) return;
@@ -136,7 +138,6 @@ namespace VisualTemplate
             openFileDialog1.Filter = "json files (*.json)|*.json|master file (*.xml)|*.xml|All files (*.*)|*.*";
             if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
             {
-             //   Program.TemplatesPages.Remove(curTempTabPage.Id);
                 return;
             }
             string[] q = openFileDialog1.SafeFileName.Split('.');
@@ -150,27 +151,7 @@ namespace VisualTemplate
                 Program.loadTemplate(openFileDialog1, curTempTabPage);
                 setVisualToPage();
 
-               // tabControl2.TabPages.Add(curTempTabPage.TabPage);
-
                 curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
-
-                //curTempTabPage.TreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
-                //curTempTabPage.dgSettings.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
-                //curTempTabPage.dgProps.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridProps_CellEndEdit);
-                //curTempTabPage.dgSettings.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSettings_CellClick);
-                //curTempTabPage.dgSettings.Columns.Add("Param", "Имя");
-                //curTempTabPage.dgSettings.Columns.Add("Value", "Значение");
-                //curTempTabPage.dgSettings.Columns.Add("", "");
-                //curTempTabPage.dgSettings.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
-                //curTempTabPage.dgSettings.Columns[0].Width = 70;
-                //curTempTabPage.dgSettings.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
-                //curTempTabPage.dgSettings.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
-                //curTempTabPage.dgSettings.Columns[2].Width = 50;
-                //curTempTabPage.TreeView.ImageList = imageListForTree;
-                //tabControl2.SelectedIndex = curTempTabPage.Id;
-                //toolStripStatusLabel1.Text = Program.TemplatesPages.Count.ToString();
-                //curTempTabPage.dgProps.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
-                //curTempTabPage.dgProps.LocationChanged += new System.EventHandler(this.LastColumnComboSelectionChanged);
             }
             else if (q[q.Length - 1] == "xml")
             {
@@ -190,8 +171,6 @@ namespace VisualTemplate
                 {
                     Program.MasterFile.Files.Add(fi.Name);
                 }
-                
-                
                 
                 foreach (string s in Program.MasterFile.Files)
                 {
@@ -223,6 +202,7 @@ namespace VisualTemplate
 
             curTempTabPage.TreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             curTempTabPage.dgSettings.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
+            curTempTabPage.dgSettings.CellBeginEdit += new DataGridViewCellCancelEventHandler(dgSettings_CellBeginEdit);
             curTempTabPage.dgProps.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             curTempTabPage.dgProps.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridProps_CellEndEdit);
             curTempTabPage.dgSettings.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSettings_CellClick);
@@ -242,7 +222,8 @@ namespace VisualTemplate
 
         }
 
-        private void dgProps_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+  
+    private void dgProps_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var currentcell = curTempTabPage.dgProps.CurrentCellAddress;
 
@@ -284,7 +265,8 @@ namespace VisualTemplate
             folderToolStripMenuItem.Enabled = false;
             signalToolStripMenuItem.Enabled = false;
             deleteToolStripButton2.Enabled = true;
-            
+            dublToolStripButton3.Enabled = false;
+
 
             TempTabPage curTmp = Program.TemplatesPages[tabControl2.SelectedIndex];
             TreeNode TrNdSel = curTmp.TreeView.SelectedNode;
@@ -299,6 +281,7 @@ namespace VisualTemplate
                 folderToolStripMenuItem.Enabled = true;
                 signalToolStripMenuItem.Enabled = true;
                 cycleToolStripMenuItem.Enabled = true;
+                dublToolStripButton3.Enabled = true;
                 curTmp.dgProps.Columns.Clear();
                 curTmp.dgProps.Columns.Add("Name", "Name");
                 curTmp.dgProps.Columns.Add("Value", "Value");
@@ -328,6 +311,7 @@ namespace VisualTemplate
                 cycleToolStripMenuItem.Enabled = true;
                 folderToolStripMenuItem.Enabled = true;
                 signalToolStripMenuItem.Enabled = true;
+                dublToolStripButton3.Enabled = true;
                 curTmp.dgProps.Columns.Clear();
                 DataGridViewComboBoxColumn cmbID = new DataGridViewComboBoxColumn();
                 cmbID.HeaderText = "ID";
@@ -443,6 +427,7 @@ namespace VisualTemplate
                 curTempTabPage.Template.Name = curTempTabPage.dgSettings.Rows[0].Cells[1].Value.ToString();
                 TrNdSel.Text = curTempTabPage.Template.Name;
                 curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
+                if (oldFileName != curTempTabPage.Template.Name) curTempTabPage.Template.CurPath = null;
                 curTempTabPage.Changed = true;
             }
             else
@@ -587,6 +572,11 @@ namespace VisualTemplate
         private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
             curTempTabPage.dgProps.CellDoubleClick -= new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellDoubleClick);
+        }
+
+        private void dgSettings_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            oldFileName = curTempTabPage.Template.Name;
         }
 
         //private void bt_AddPoV_Click(object sender, EventArgs e)
@@ -1012,6 +1002,7 @@ namespace VisualTemplate
             if(curTempTabPage.Template.CurPath is null)
             {
                 saveFileDialog1.Filter = "json files (*.json)|*.json|All files (*.*)|*.*";
+                saveFileDialog1.FileName = curTempTabPage.Template.Name;
                 if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
                 {
                     return;
@@ -1129,9 +1120,63 @@ namespace VisualTemplate
             
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
 
+
+        private void getForSignalExceltoolStripButton5_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
+            if (!(Program.defaultPathOutCsv is null)) saveFileDialog1.InitialDirectory = Program.defaultPathOutCsv;
+            saveFileDialog1.FileName = curTempTabPage.Template.Name + "_out";
+            if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+            {
+                return;
+            }
+            Program.globalCsvString = "";
+            Program.getForExcel(curTempTabPage.Template);
+
+            var fs = new FileStream(saveFileDialog1.FileName, FileMode.Create);
+            var sw = new StreamWriter(fs, Encoding.Default);
+            Program.globalCsvString = Program.globalCsvString.Trim();
+            sw.Write(Program.globalCsvString);
+            sw.Close();
+            Program.defaultPathOutCsv = Path.GetDirectoryName(saveFileDialog1.FileName);
+
+            if(MessageBox.Show(this,"Готово. Открыть файл?","Выполнено",MessageBoxButtons.YesNo,MessageBoxIcon.Question,MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+            {
+                ProcessStartInfo pci = new ProcessStartInfo("Excel.exe");
+                pci.Arguments = '"' + saveFileDialog1.FileName + '"';
+                Process.Start(pci);
+            }
         }
+
+        private void dublToolStripButton3_Click(object sender, EventArgs e)
+        {
+            Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
+            Element dublEl = null;
+            if (el is null) return;
+            if (el.Parent is null) return;
+            switch (el.GetType().ToString())
+            {
+                case "VisualTemplate.Signal":
+                    Signal s = el as Signal;
+                    dublEl = (Signal)s.Clone();
+                    el.Parent.Signals.Add((Signal)dublEl);
+                    dublEl.restoreParent(el.Parent);
+                    Program.addToTree(dublEl, curTempTabPage.TreeView, curTempTabPage.Id, curTempTabPage.TreeView.SelectedNode.Parent);
+                    //curTempTabPage.TreeView.SelectedNode.Expand();
+                    break;
+                case "VisualTemplate.Cycle":
+                    Cycle c = el as Cycle;
+                    dublEl = (Cycle)c.Clone();
+                    el.Parent.Cycles.Add((Cycle)dublEl);
+                    dublEl.restoreParent(el.Parent);
+                    Program.addToTree(dublEl, curTempTabPage.TreeView, curTempTabPage.Id, curTempTabPage.TreeView.SelectedNode.Parent);
+                    
+                    //curTempTabPage.TreeView.SelectedNode.Expand();
+                    break;
+            }
+
+
+    }
     }
 }

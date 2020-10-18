@@ -45,6 +45,7 @@
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.outToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
+            this.getForSignalExceltoolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -180,10 +181,11 @@
             this.closeToolStripButton,
             this.toolStripSeparator,
             this.outToolStripButton,
-            this.toolStripButton4});
+            this.toolStripButton4,
+            this.getForSignalExceltoolStripButton5});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(179, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(202, 25);
             this.toolStrip1.TabIndex = 24;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -261,6 +263,16 @@
             this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton4.Text = "ExportAll";
             this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
+            // 
+            // getForSignalExceltoolStripButton5
+            // 
+            this.getForSignalExceltoolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.getForSignalExceltoolStripButton5.Image = ((System.Drawing.Image)(resources.GetObject("getForSignalExceltoolStripButton5.Image")));
+            this.getForSignalExceltoolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.getForSignalExceltoolStripButton5.Name = "getForSignalExceltoolStripButton5";
+            this.getForSignalExceltoolStripButton5.Size = new System.Drawing.Size(23, 22);
+            this.getForSignalExceltoolStripButton5.Text = "Get for signal excel";
+            this.getForSignalExceltoolStripButton5.Click += new System.EventHandler(this.getForSignalExceltoolStripButton5_Click);
             // 
             // tabControl2
             // 
@@ -555,7 +567,7 @@
             this.pastToolStripButton1,
             this.dublToolStripButton3,
             this.deleteToolStripButton2});
-            this.toolStrip2.Location = new System.Drawing.Point(179, 24);
+            this.toolStrip2.Location = new System.Drawing.Point(202, 25);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Size = new System.Drawing.Size(164, 25);
             this.toolStrip2.TabIndex = 0;
@@ -633,6 +645,7 @@
             this.dublToolStripButton3.Name = "dublToolStripButton3";
             this.dublToolStripButton3.Size = new System.Drawing.Size(23, 22);
             this.dublToolStripButton3.Text = "Dublicate";
+            this.dublToolStripButton3.Click += new System.EventHandler(this.dublToolStripButton3_Click);
             // 
             // deleteToolStripButton2
             // 
@@ -654,7 +667,7 @@
             this.toolStripButton1,
             this.toolStripButton2,
             this.toolStripButton3});
-            this.toolStrip3.Location = new System.Drawing.Point(344, 24);
+            this.toolStrip3.Location = new System.Drawing.Point(366, 25);
             this.toolStrip3.Name = "toolStrip3";
             this.toolStrip3.Size = new System.Drawing.Size(147, 25);
             this.toolStrip3.TabIndex = 0;
@@ -855,6 +868,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TreeView treeMasterView;
         private System.Windows.Forms.ToolStripButton toolStripButton4;
+        private System.Windows.Forms.ToolStripButton getForSignalExceltoolStripButton5;
     }
 }
 

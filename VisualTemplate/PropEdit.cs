@@ -72,7 +72,9 @@ namespace VisualTemplate
         private void cb_ids_SelectedIndexChanged(object sender, EventArgs e)
         {
             cb_types.SelectedItem = Program.TypeOfProperty[cb_ids.SelectedItem.ToString()];
-            if(cb_ids.SelectedItem.ToString() == "1")
+            textBox1.Text = Service.getNameById(cb_ids.SelectedItem.ToString());
+            textBox2.Text = Service.getDescrById(cb_ids.SelectedItem.ToString());
+            if (cb_ids.SelectedItem.ToString() == "1")
             {
                 richTextBox1.Visible = false;
                 cb_CDTType.Visible = true;

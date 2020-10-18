@@ -67,8 +67,6 @@ namespace VisualTemplate
             VariantsDic = new Dictionary<string, Variant>();
             setDic();
 
-
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(pMainForm = new MainForm());
@@ -91,19 +89,8 @@ namespace VisualTemplate
             }
         }
 
-        //Создание новго теплейта
-        public static TempTabPage CreateNewTemplate()
-        {
-            TempTabPage tmtp = new TempTabPage("new");
-            TemplatesPages.Add(TemplatesPages.Count, tmtp);
-            return tmtp;
-        }
-
-
-
-
-
-        #region work whith tree
+        //Работа с деревом сигналов
+        #region work whith tree 
 
         public static void addToTree(object o, TreeView tr, int tempId, TreeNode parentTreeNode = null)
         {
@@ -160,93 +147,86 @@ namespace VisualTemplate
             }
         }
 
-        #endregion
-
-        ///
-        /// НЕОПТИМИЗИРОВАННОЕ ГОВНО ДАЛЕЕ
-        ///
-
-        private static void RemeberCsvStr(string str)
-        {
-            //if (str.LastIndexOf('\n') == str.Length)
-            //{
-
-            //}
-            globalCsvString += str;// + "\n";
-            
-            //if (globalCsvString == "")
-            //{
-            //    globalCsvString += str + "\n";
-            //}
-            //else if(globalCsvString.Last() != '\n')
-            //{
-            //    globalCsvString +=  str;
-            // //   globalCsvString += "\n" + str;
-            //}
-            //else
-            //{
-            //    globalCsvString += str;
-            //}
-        }
-
-        public static void loadTemplate(OpenFileDialog op, TempTabPage opTmp)
-        {
-
-            Cursor.Current = Cursors.WaitCursor;
-            opTmp.TreeView.Nodes.Clear();
-           // templateElements.Clear();
-            var fs = new FileStream(op.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            var sr = new StreamReader(fs);
-            string jsonStr = sr.ReadToEnd();
-            opTmp.Template= JsonConvert.DeserializeObject<Template>(jsonStr);
-            opTmp.Template.CurPath = op.FileName;
-            RestoreParentsInTemplate(opTmp.Template);
-
-            addToTree(opTmp.Template, opTmp.TreeView, opTmp.Id);
-            //opTmp.TreeView.Nodes[0].Expand();
-            // trVi.ExpandAll();
-            sr.Close();
-            defaultPathJson = Path.GetDirectoryName(op.FileName);
-            Cursor.Current = Cursors.Default;
-        }
-
-        public static bool loadTemplate(string FileName, TempTabPage opTmp)
-        {
-            FileInfo fi = new FileInfo(FileName);
-            if (!fi.Exists) return false;
-            Cursor.Current = Cursors.WaitCursor;
-            opTmp.TreeView.Nodes.Clear();
-            // templateElements.Clear();
-            var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            var sr = new StreamReader(fs);
-            string jsonStr = sr.ReadToEnd();
-            opTmp.Template = JsonConvert.DeserializeObject<Template>(jsonStr);
-            opTmp.Template.CurPath = FileName;
-            RestoreParentsInTemplate(opTmp.Template);
-
-            addToTree(opTmp.Template, opTmp.TreeView, opTmp.Id);
-            //opTmp.TreeView.Nodes[0].Expand();
-            // trVi.ExpandAll();
-            sr.Close();
-            defaultPathJson = Path.GetDirectoryName(FileName);
-            Cursor.Current = Cursors.Default;
-            return true;
-        }
-
         public static void deleteSelected(TempTabPage ttp)
         {
-
             Element e = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id);
             ttp.TreeView.SelectedNode.Remove();
             e.Remove();
             e = null;
-            
-            //Element e = getElementById(trN.Name, tabControl2.SelectedIndex);
-            //trN.Remove();
-            ////templateElements[int.Parse(trN.Name)] = null;
-            //e.Remove();
         }
 
+        public static object getObjectFromTree(string key, int tempId)
+        {
+            int id;
+            if (int.TryParse(key, out id))
+            {
+                return getObject(id, tempId);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private static object getObject(int id, int tempId)
+        {
+            return TemplatesPages[tempId].Elements[id];
+        }
+
+        public static Element getElementById(int id, int tempId)
+        {
+            return TemplatesPages[tempId].Elements[id] as Element;
+        }
+
+        public static Element getElementById(string key, int ttpId)
+        {
+            int id;
+            if (int.TryParse(key, out id))
+            {
+                return TemplatesPages[ttpId].Elements[id] as Element;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static void ReplaceInTree(TreeNode trN, string find, string rep)
+        {
+            //Element el = getElementById(trN.Name);
+            //Service.Replace(el,find,rep);
+        }
+
+
+        #endregion
+
+        //Работа со вкладками шаблонов
+        #region work with Template Tab Page
+
+        public static void addCsvVar(TempTabPage ttp)
+        {
+            CsvVar csv = new CsvVar(@"C:\file.csv");
+            csv.Name = "Csv1";
+            csv.Separator = ';';
+            ttp.Template.Add(csv);
+        }
+
+        public static void getCsvVars(TempTabPage ttp)
+        {
+            ttp.dgProps.Rows.Clear();
+            foreach (CsvVar cv in ttp.Template.CsvVars)
+            {
+                ttp.dgProps.Rows.Add(cv.Name, cv.Path, cv.Separator.ToString(), cv.encodingStr);
+            }
+        }
+
+        //Создание новго темплейта
+        public static TempTabPage CreateNewTemplate()
+        {
+            TempTabPage tmtp = new TempTabPage("new");
+            TemplatesPages.Add(TemplatesPages.Count, tmtp);
+            return tmtp;
+        }
         public static void saveTemplate(SaveFileDialog sf)
         {
             if (!(defaultPathJson is null)) sf.InitialDirectory = defaultPathJson;
@@ -271,34 +251,10 @@ namespace VisualTemplate
             sw.Write(json);
             sw.Close();
         }
+        #endregion
 
-
-        public static void setCycle(TreeNode trN, string st, string end, string scvFile)
-        {
-            //Cycle c = getElementById(trN.Name) as Cycle;
-            //c.Start = int.Parse(st);
-            //c.End = int.Parse(end);
-            //c.csvVarFile = scvFile;
-        }
-
-        public static void setCycle(TempTabPage ttp)
-        {
-            Cycle c = getElementById(ttp.TreeView.SelectedNode.Name,ttp.Id) as Cycle;
-            c.Name = ttp.dgSettings.Rows[0].Cells[1].Value is null ? "": ttp.dgSettings.Rows[0].Cells[1].Value.ToString();
-            ////dataGridSettings.Rows[0].Cells[1].Value.ToString(), dataGridSettings.Rows[1].Cells[1].Value.ToString(), dataGridSettings.Rows[2].Cells[1].Value.ToString()
-            c.Start = int.Parse(ttp.dgSettings.Rows[1].Cells[1].Value.ToString());
-            c.End = int.Parse(ttp.dgSettings.Rows[2].Cells[1].Value.ToString());
-            ////if (dgv.Rows[2].Cells[1].Value is null)
-            c.csvVarFile = ttp.dgSettings.Rows[3].Cells[1].Value is null ? "" : ttp.dgSettings.Rows[3].Cells[1].Value.ToString();//dgv.Rows[2].Cells[1].Value.ToString();
-            c.Description = ttp.dgSettings.Rows[4].Cells[1].Value is null ? "" : ttp.dgSettings.Rows[4].Cells[1].Value.ToString();//dgv.Rows[2].Cells[1].Value.ToString();
-
-        }
-
-        public static void setSignal(TempTabPage ttp)
-        {
-            Signal s = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id) as Signal;
-            s.Name = ttp.dgSettings.Rows[0].Cells[1].Value.ToString();
-        }
+        //Работа с шаблоном
+        #region work whith template
 
         //восстановление ссылок на родительские элементы после чтения из json
         public static void RestoreParentsInTemplate(Template t)
@@ -307,43 +263,115 @@ namespace VisualTemplate
             {
                 c.tParent = t;
                 RestoreParents(c);
-                foreach(Variant v in c.Variatns)
+                foreach (Variant v in c.Variatns)
                 {
                     RestoreVar(v);
                 }
             }
         }
 
-        public static void addVariant(Cycle c)
+        public static void loadTemplate(OpenFileDialog op, TempTabPage opTmp)
         {
-            int maxID=0;
-            foreach(Variant v in VariantsDic.Values)
-            {
-                int vId;
-                int.TryParse(v.Id, out vId);
-                if (vId > maxID) maxID = vId;
-                
-            }
-            Variant vn = new Variant("name", "value", (maxID+1).ToString());
-            c.Add(vn);
-            VariantsDic.Add(vn.Id, vn);
+            Cursor.Current = Cursors.WaitCursor;
+            opTmp.TreeView.Nodes.Clear();
+            var fs = new FileStream(op.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var sr = new StreamReader(fs);
+            string jsonStr = sr.ReadToEnd();
+            opTmp.Template = JsonConvert.DeserializeObject<Template>(jsonStr);
+            opTmp.Template.Name = op.SafeFileName.Replace(".json","");
+            opTmp.Template.CurPath = op.FileName;
+            RestoreParentsInTemplate(opTmp.Template);
+
+            addToTree(opTmp.Template, opTmp.TreeView, opTmp.Id);
+            opTmp.TreeView.Nodes[0].Expand();
+            sr.Close();
+            defaultPathJson = Path.GetDirectoryName(op.FileName);
+            Cursor.Current = Cursors.Default;
+        } 
+
+
+        public static bool loadTemplate(string FileName, TempTabPage opTmp)
+        {
+            FileInfo fi = new FileInfo(FileName);
+            if (!fi.Exists) return false;
+            Cursor.Current = Cursors.WaitCursor;
+            opTmp.TreeView.Nodes.Clear();
+            // templateElements.Clear();
+            var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var sr = new StreamReader(fs);
+            string jsonStr = sr.ReadToEnd();
+            opTmp.Template = JsonConvert.DeserializeObject<Template>(jsonStr);
+            opTmp.Template.CurPath = FileName;
+            RestoreParentsInTemplate(opTmp.Template);
+
+            addToTree(opTmp.Template, opTmp.TreeView, opTmp.Id);
+            //opTmp.TreeView.Nodes[0].Expand();
+            // trVi.ExpandAll();
+            sr.Close();
+            defaultPathJson = Path.GetDirectoryName(FileName);
+            Cursor.Current = Cursors.Default;
+            return true;
         }
 
-        public static void RestoreVar(Variant v)
+        #endregion
+
+        //Работа с Циклами
+        #region work with Сycle
+
+        private static void culcValuec(Cycle c)
         {
-           
-            if (v.Id is null)
-            {
-                v.Id = (VariantsDic.Count + 1).ToString();
-            }
-            try
-            {
-                VariantsDic.Add(v.Id, v);
-            }
-            catch 
+            foreach (Variant v in c.Variatns)
             {
 
+                int val;
+                if (int.TryParse(v.Value, out val))
+                {
+                    v.Move();
+                    // v.setTempValue((val + 1).ToString());
+                }
+                // c.CsvString = c.CsvString.Replace(v.NameS, v.Value);
             }
+        }
+
+        public static void getSettings(Cycle c, TempTabPage t)
+        {
+            DataGridView dgV = t.dgSettings;
+            dgV.Rows.Clear();
+
+
+            DataGridViewRow csvrow = new DataGridViewRow();
+            DataGridViewTextBoxCell namecell = new DataGridViewTextBoxCell();
+            DataGridViewComboBoxCell csv_cell = new DataGridViewComboBoxCell();
+            DataGridViewButtonCell btn_cell = new DataGridViewButtonCell();
+            btn_cell.Value = "updt";
+            csv_cell.Items.Add("");
+            foreach (CsvVar cv in t.Template.CsvVars)
+            {
+                csv_cell.Items.Add(cv.Name);
+            }
+            csv_cell.Value = c.csvVarFile;
+
+            csvrow.Cells.Add(namecell);
+            namecell.Value = "csv";
+            csvrow.Cells.Add(csv_cell);
+            csvrow.Cells.Add(btn_cell);
+            dgV.Rows.Add("Name", c.Name);
+            dgV.Rows.Add("Start", c.Start);
+            dgV.Rows.Add("End", c.End);
+            dgV.Rows.Add(csvrow);
+            dgV.Rows.Add("Description", c.Description);
+        }
+
+        public static void getSettings(Signal s, TreeNode teN, DataGridView dgV)
+        {
+            dgV.Rows.Clear();
+            dgV.Rows.Add("Name", s.Name);
+        }
+
+        public static void getSettings(Template t, TreeNode teN, DataGridView dgV)
+        {
+            dgV.Rows.Clear();
+            dgV.Rows.Add("Name", t.Name);
         }
 
         public static void newVarsInDic(Cycle c)
@@ -372,27 +400,176 @@ namespace VisualTemplate
             }
         }
 
-        // рекурсивная фунция восстановления
-        private static void RestoreParents(Element eParent)
+        public static void addVariant(Cycle c)
         {
-            foreach (Element eChild in eParent.Elements)
+            int maxID = 0;
+            foreach (Variant v in VariantsDic.Values)
             {
-                eChild.restoreParent(eParent);
-                if (eChild.GetType().ToString() == "VisualTemplate.Cycle")
-                {
-                    Cycle c = eChild as Cycle;
-                    foreach (Variant v in c.Variatns)
-                    {
-                        RestoreVar(v);
-                    }
-                }
-                if (eChild.HasElements)
-                {
-                    RestoreParents(eChild);
-                }
+                int vId;
+                int.TryParse(v.Id, out vId);
+                if (vId > maxID) maxID = vId;
 
             }
+            Variant vn = new Variant("name", "value", (maxID + 1).ToString());
+            c.Add(vn);
+            VariantsDic.Add(vn.Id, vn);
         }
+
+        public static void setCycle(TreeNode trN, string st, string end, string scvFile)
+        {
+            //Cycle c = getElementById(trN.Name) as Cycle;
+            //c.Start = int.Parse(st);
+            //c.End = int.Parse(end);
+            //c.csvVarFile = scvFile;
+        }
+
+        public static void setCycle(TempTabPage ttp)
+        {
+            Cycle c = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id) as Cycle;
+            c.Name = ttp.dgSettings.Rows[0].Cells[1].Value is null ? "" : ttp.dgSettings.Rows[0].Cells[1].Value.ToString();
+            ////dataGridSettings.Rows[0].Cells[1].Value.ToString(), dataGridSettings.Rows[1].Cells[1].Value.ToString(), dataGridSettings.Rows[2].Cells[1].Value.ToString()
+            c.Start = int.Parse(ttp.dgSettings.Rows[1].Cells[1].Value.ToString());
+            c.End = int.Parse(ttp.dgSettings.Rows[2].Cells[1].Value.ToString());
+            ////if (dgv.Rows[2].Cells[1].Value is null)
+            c.csvVarFile = ttp.dgSettings.Rows[3].Cells[1].Value is null ? "" : ttp.dgSettings.Rows[3].Cells[1].Value.ToString();//dgv.Rows[2].Cells[1].Value.ToString();
+            c.Description = ttp.dgSettings.Rows[4].Cells[1].Value is null ? "" : ttp.dgSettings.Rows[4].Cells[1].Value.ToString();//dgv.Rows[2].Cells[1].Value.ToString();
+
+        }
+
+        public static void setVariants(Cycle c, DataGridView dgV)
+        {
+            int vNum = 0;
+            int st = 1;
+            foreach (DataGridViewRow row in dgV.Rows)
+            {
+                c.Variatns[vNum].Name = row.Cells[0].Value.ToString();
+                c.Variatns[vNum].Value = row.Cells[1].Value.ToString();
+                c.Variatns[vNum].Step = int.TryParse(row.Cells[2].Value.ToString(), out st) ? st : 1;
+                vNum++;
+            }
+        }
+
+        public static void getVariants(Cycle c, DataGridView dgV)
+        {
+            dgV.Rows.Clear();
+            foreach (Variant v in c.Variatns)
+            {
+                dgV.Rows.Add(v.Name, v.Value, v.Step);
+            }
+        }
+
+        #endregion
+
+        //Работа с сигналами
+        #region work with signal
+
+        public static void setSignal(TempTabPage ttp)
+        {
+            Signal s = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id) as Signal;
+            s.Name = ttp.dgSettings.Rows[0].Cells[1].Value.ToString();
+        }
+
+        public static void setProperties(Signal s, DataGridView dgV, TreeNode trN = null)
+        {
+            int pNum = 0;
+            foreach (DataGridViewRow row in dgV.Rows)
+            {
+                s.Properties[pNum].Id = row.Cells[0].Value.ToString();
+                s.Properties[pNum].Type = row.Cells[1].Value.ToString();
+                s.Properties[pNum].Value = row.Cells[2].Value == null ? "" : row.Cells[2].Value.ToString();
+                if (!(trN is null) && s.Properties[pNum].Id == "1")
+                {
+                    trN.ImageIndex = Service.getImgCodeById(s.Properties[pNum].Value);
+                    trN.SelectedImageIndex = Service.getImgCodeById(s.Properties[pNum].Value);
+                }
+                pNum++;
+            }
+        }
+
+        public static void getProperties(Signal s, DataGridView dgV, TreeNode trN = null)
+        {
+            dgV.Rows.Clear();
+            if (!(trN is null))
+            {
+                trN.ImageIndex = 0;
+                trN.SelectedImageIndex = 0;
+            }
+            int rInd = 0;
+            foreach (Property p in s.Properties)
+            {
+                dgV.Rows.Add(p.Id, p.Type, p.Value);
+                dgV.Rows[rInd].Cells[2].Value = p.Value;
+                rInd++;
+                if (!(trN is null) && p.Id == "1")
+                {
+                    trN.ImageIndex = Service.getImgCodeById(p.Value);
+                    trN.SelectedImageIndex = Service.getImgCodeById(p.Value);
+                }
+            }
+        }
+
+        public static void getVariantsToAdd(Signal s, TempTabPage tmp)
+        {
+
+            tmp.dgVariants.Rows.Clear();
+            int r = 0;
+            Cycle c = getParentCycle(s);
+            bool one = false;
+
+
+            do
+            {
+                if (c.HasVariants)
+                {
+                    foreach (Variant v in c.Variatns)
+                    {
+                        tmp.dgVariants.Rows.Add();
+                        tmp.dgVariants.Rows[r].Cells[0].Value = v.Name;
+                        tmp.dgVariants.Rows[r].Cells[1].Value = v.Value;
+                        r++;
+                    }
+                }
+                c = getParentCycle(c);
+                if (c == null) return;
+
+                if (c.Parent == null & one == false)
+                {
+                    one = true;
+                }
+                else
+                {
+                    one = false;
+                }
+
+            } while (c.Parent != null | one);
+
+
+            //while (c.Parent != null | one)
+            //{
+
+            //    if (c.HasVariants)
+            //    {
+            //        foreach(Variant v in c.Variatns)
+            //        {
+            //            tmp.dgVariants.Rows.Add();
+            //            tmp.dgVariants.Rows[r].Cells[0].Value = v.Name;
+            //            tmp.dgVariants.Rows[r].Cells[1].Value = v.Value;
+            //            r++;
+            //        }
+            //    }
+            //    one = false;
+            //    c = getParentCycle(c);
+            //    if (c == null) return;
+            //}
+
+
+
+        }
+
+        #endregion
+
+        //Работа с переменными
+        #region work with Varinats
 
         public static void setIdtoVar(Variant va)
         {
@@ -406,87 +583,34 @@ namespace VisualTemplate
             }
             va.Id = (maxID + 1).ToString();
             VariantsDic.Add(va.Id, va);
-
         }
 
-
-
-        public static void getSettings(Cycle c, TempTabPage t)
+        public static void RestoreVar(Variant v)
         {
-            DataGridView dgV = t.dgSettings;
-            dgV.Rows.Clear();
 
-           
-            DataGridViewRow csvrow = new DataGridViewRow();
-            DataGridViewTextBoxCell namecell = new DataGridViewTextBoxCell();
-            DataGridViewComboBoxCell csv_cell = new DataGridViewComboBoxCell();
-            DataGridViewButtonCell btn_cell = new DataGridViewButtonCell();
-            btn_cell.Value = "updt";
-            csv_cell.Items.Add(""); 
-            foreach (CsvVar cv in t.Template.CsvVars)
+            if (v.Id is null)
             {
-                csv_cell.Items.Add(cv.Name);
+                v.Id = (VariantsDic.Count + 1).ToString();
             }
-            csv_cell.Value = c.csvVarFile;
-
-            csvrow.Cells.Add(namecell);
-            namecell.Value = "csv";
-            csvrow.Cells.Add(csv_cell);
-            csvrow.Cells.Add(btn_cell);
-            dgV.Rows.Add("Name", c.Name); 
-            dgV.Rows.Add("Start",c.Start);
-            dgV.Rows.Add("End", c.End);
-            dgV.Rows.Add(csvrow);
-            dgV.Rows.Add("Description", c.Description);
-        }
-        public static void getSettings(Signal s, TreeNode teN, DataGridView dgV)
-        {
-            dgV.Rows.Clear();
-            dgV.Rows.Add("Name", s.Name);
-        }
-        public static void getSettings(Template t, TreeNode teN, DataGridView dgV)
-        {
-            dgV.Rows.Clear();
-            dgV.Rows.Add("Name", t.Name);
-        }
-
-
-
-        public static void getCsv(Template t)
-        {
-            foreach(Cycle c in t.Elements)
+            try
             {
-                runCycle(c, t);
+                VariantsDic.Add(v.Id, v);
+            }
+            catch
+            {
+
             }
         }
 
-        private static void runCycle (Cycle c, Template t)
-        {
-            c.CsvString = null;
-            if (c.csvVarFile is null || c.csvVarFile == "")
-            {
-                for (c.Counter = c.Start; c.isGoOn; c.Increase())
-                {
-                    goOnCycle(c, t);
-                 //   //c.CsvString = mathOnDollar(c.CsvString, ref k); //c.CsvString.Replace("$$", k.ToString());
-                    culcValuec(c);
-                }
-               // Console.WriteLine(c.CsvString);
-                RemeberCsvStr(c.CsvString);
-                c.ResetValues();
-            }
-            else
-            {
-                readCsv(c, t.getCsvVar(c.csvVarFile), t);
-               // Console.WriteLine(c.CsvString);
-             //   RemeberCsvStr(c.CsvString);
-                c.ResetValues();
-            }
-        }
+        #endregion
 
-        public static Cycle getParentCycle (Signal s)
+        //Работа с Элементами(Циклы Сигналы)
+        #region work with Elements
+
+
+        public static Cycle getParentCycle(Signal s)
         {
-            if(s.Parent.GetType().ToString() == "VisualTemplate.Cycle")
+            if (s.Parent.GetType().ToString() == "VisualTemplate.Cycle")
             {
                 return (Cycle)s.Parent;
             }
@@ -508,25 +632,38 @@ namespace VisualTemplate
                 return getParentCycle(el.Parent);
             }
         }
-       public static string getCsvPath(CsvVar csv, Template t)
+
+        // рекурсивная фунция восстановления
+        private static void RestoreParents(Element eParent)
         {
-            if (csv is null) return null;
-            if (csv.Path.IndexOf(@":\") > 0)
+            foreach (Element eChild in eParent.Elements)
             {
-                return csv.Path; 
-            }
-            else
-            {
-                return Path.GetDirectoryName(t.CurPath) + @"\" + csv.Path;
+                eChild.restoreParent(eParent);
+                if (eChild.GetType().ToString() == "VisualTemplate.Cycle")
+                {
+                    Cycle c = eChild as Cycle;
+                    foreach (Variant v in c.Variatns)
+                    {
+                        RestoreVar(v);
+                    }
+                }
+                if (eChild.HasElements)
+                {
+                    RestoreParents(eChild);
+                }
+
             }
         }
+        #endregion
 
-
+        //Вывод csv файла для альфы
+        #region Out CSV
 
         static void readCsv(Cycle c, CsvVar csv, Template t)
         {
-            try { 
-                using (StreamReader sr = new StreamReader(getCsvPath(csv,t), csv.Encoding))
+            try
+            {
+                using (StreamReader sr = new StreamReader(getCsvPath(csv, t), csv.Encoding))
                 {
                     string line;
                     string headers = sr.ReadLine();
@@ -553,52 +690,345 @@ namespace VisualTemplate
                     }
                 }
             }
-            catch(IOException ex)
+            catch (IOException ex)
             {
                 MessageBox.Show(ex.Message);
                 return;
             }
         }
 
-        private static void culcValuec(Cycle c)
+        public static void getCsv(Template t)
+        {
+            foreach (Cycle c in t.Elements)
+            {
+                runCycle(c, t);
+            }
+        }
+
+        private static void runCycle(Cycle c, Template t)
+        {
+            c.CsvString = null;
+            if (c.csvVarFile is null || c.csvVarFile == "")
+            {
+                for (c.Counter = c.Start; c.isGoOn; c.Increase())
+                {
+                    goOnCycle(c, t);
+                    //   //c.CsvString = mathOnDollar(c.CsvString, ref k); //c.CsvString.Replace("$$", k.ToString());
+                    culcValuec(c);
+                }
+                // Console.WriteLine(c.CsvString);
+                RemeberCsvStr(c.CsvString);
+                c.ResetValues();
+            }
+            else
+            {
+                readCsv(c, t.getCsvVar(c.csvVarFile), t);
+                // Console.WriteLine(c.CsvString);
+                //   RemeberCsvStr(c.CsvString);
+                c.ResetValues();
+            }
+        }
+
+        private static void goOnCycle(Cycle c, Template t, Signal sParent = null, string propStr = "")
+        {
+            List<Signal> listOfSignals;
+            //если цикл имеет сигналы
+            if (c.HasSignals)
+            {
+                //если нет родительского сигнала, тогда перебираем элементы в цикле, иначе перебираем элементы в сигнале
+                if (sParent is null)
+                {
+                    listOfSignals = c.Signals;
+                }
+                else
+                {
+                    listOfSignals = sParent.Signals;
+                }
+
+                //Cycle prtCycle = getParentCycle(c);
+                //if (!(prtCycle is null)) replaceInVarinatValue(c, prtCycle);
+
+                //перебираем сигналы
+                foreach (Signal sCh in listOfSignals)
+                {
+                    replaceVariantsInNames(c, sCh);
+                    if (sCh.Name.IndexOf("$") > 0) sCh.setTempName(mathOnDollar(sCh.Name, c));
+                    //если у сигнала есть свойства тогда ...
+                    if (sCh.HasProperties)
+                    {
+                        //... перебираем и добавляем их в ...
+                        foreach (Property p in sCh.Properties)
+                        {
+                            // if (c.HasCsvString) c.CsvString += "\n";
+
+                            // if (p.Type == "String" && p.Value.Substring(0, 1) != "\"") p.Value = "\"" + p.Value + "\"";
+
+                            // Проверяем на ковычки:
+
+                            string csvStr = "\"" + sCh.FullPath + "\"" + "," + p.Id + "," + p.Type + "," + getNormQuotes(p);
+                            //    Console.WriteLine(csvStr);
+
+                            csvStr = replaceVariants(c, csvStr);
+                            csvStr = replaceParentVariant(csvStr, sCh);
+                            csvStr = mathOnDollar(csvStr, c);
+
+                            //если у нас есть хоть одна переменная из родительского цикла
+                            // то перебираем все переменные из всех родительских циклов.
+                            //if (csvStr.IndexOf("$.") > 0)
+                            //{
+
+                            //    }
+                            //
+                            //здесь можно добавить функцию вывода
+                            //Console.WriteLine(csvStr);
+                            //
+
+                            c.CsvString += csvStr + "\n";
+                        }
+                    }
+
+                    //если сигнал имеет дочерние сигналы тогда вызываем себя ещё раз
+                    if (sCh.HasSignals)
+                    {
+                        goOnCycle(c, t, sCh, propStr);
+                    }
+                    //если сигнал имеет дочерние циклы то запускаем цикл
+                    if (sCh.HasCycles)
+                    {
+                        foreach (Cycle cCh in sCh.Cycles)
+                        {
+                            runCycle(cCh, t);
+                        }
+                    }
+                    ResetSignalsNames(listOfSignals);
+                }
+            }
+            // если цикл имеет дочерние циклы
+            if (c.HasCycles)
+            {
+                foreach (Cycle cCh in c.Cycles)
+                {
+                    runCycle(cCh, t);
+                }
+            }
+        }
+
+        private static void RemeberCsvStr(string str)
+        {
+            globalCsvString += str;
+        }
+        #endregion
+
+        //Вывод для signal excel
+        #region work signal excel
+
+
+        public static void getForExcel(Template t)
+        {
+            foreach (Cycle c in t.Elements)
+            {
+                runCycleForExcel(c, t);
+            }
+        }
+
+        private static void runCycleForExcel(Cycle c, Template t)
+        {
+            c.CsvString = "";
+            for (c.Counter = c.Start; c.isGoOn; c.Increase())
+            {
+                goOnCycleForExcel(c, t);
+                culcValuec(c);
+            }
+
+           // goOnCycleForExcel(c, t);
+           // culcValuec(c);
+            RemeberCsvStr(c.CsvString);
+            c.ResetValues();
+        }
+
+        private static void goOnCycleForExcel(Cycle c, Template t, Signal sParent = null, string propStr = "")
+        {
+            List<Signal> listOfSignals;
+            //если цикл имеет сигналы
+            if (c.HasSignals)
+            {
+                //если нет родительского сигнала, тогда перебираем элементы в цикле, иначе перебираем элементы в сигнале
+                if (sParent is null)
+                {
+                    listOfSignals = c.Signals;
+                }
+                else
+                {
+                    listOfSignals = sParent.Signals;
+                }
+
+                //перебираем сигналы
+                foreach (Signal sCh in listOfSignals)
+                {
+                    replaceVariantsInNames(c, sCh);
+                    if (sCh.Name.IndexOf("$") > 0) sCh.setTempName(mathOnDollar(sCh.Name, c));
+                    //если у сигнала есть свойства тогда ...
+                    bool hasType = false;
+                    if (sCh.HasProperties)
+                    {
+                        //... перебираем и добавляем их в ...
+                        foreach (Property p in sCh.Properties)
+                        {
+                            // Проверяем на ковычки:
+                            string csvStr;
+
+
+
+                            if (p.Id == "1")
+                            {
+                                csvStr = ";" + "\"" + sCh.FullPath + "\"" + ";Type;;" + CDTTypes[p.Value];//+ p.Id + "," + p.Type + "," + getNormQuotes(p);
+                                hasType = true;
+                            }
+                            else if(p.Id == "2")
+                            {
+                                csvStr = ";" + "\"" + sCh.FullPath + "\"" + ";Value;;" + getNormQuotes(p);//+ p.Id + "," + p.Type + "," + getNormQuotes(p);
+                                hasType = true;
+                            }
+                            else if(p.Id == "3")
+                            {
+                                csvStr = ";" + "\"" + sCh.FullPath + "\"" + ";Quality;;" + getNormQuotes(p);//+ p.Id + "," + p.Type + "," + getNormQuotes(p);
+                                hasType = true;
+                            }
+                            else if(p.Id == "999004")
+                            {
+                                string[] str = p.Value.Split("\n".ToCharArray());
+                                csvStr = "";
+                                for (int k=0; k <= str.Length - 1; k++)
+                                {
+                                    if(str[k] != "")
+                                    {
+                                        if (k != 0) csvStr += "\n";
+                                         csvStr += ";" + "\"" + sCh.FullPath + "\"" + ";" + p.Id + ";" + p.Type + ";" + str[k] ;
+                                        //if (k != str.Length - 1) csvStr += "\n";
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                 csvStr = ";" +  "\"" + sCh.FullPath + "\"" + ";" + p.Id + ";" + p.Type + ";" + getNormQuotes(p);
+                            }
+
+                            csvStr = replaceVariants(c, csvStr);
+                            csvStr = replaceParentVariant(csvStr, sCh);
+                            csvStr = mathOnDollar(csvStr, c);
+                            c.CsvString += csvStr + "\n";
+                        }
+                        if (!hasType)
+                        {
+                            //c.CsvString += ";" + "\"" + sCh.FullPath + "\"" + ";Type;;Folder" + "\n";
+                            string fPath = sCh.FullPath;
+                            fPath = replaceVariants(c, fPath);
+                            fPath = mathOnDollar(fPath, c);
+
+                            c.CsvString += ";" + "\"" + fPath + "\"" + ";Type;;Folder" + "\n";
+                            //c.CsvString += ";" + "\"" + mathOnDollar(sCh.FullPath,c) + "\"" + ";Type;;Folder" + "\n";
+                        }
+                    }
+                    else
+                    {
+                        string fPath = sCh.FullPath;
+                        fPath = replaceVariants(c, fPath);
+                        fPath = mathOnDollar(fPath, c);
+                        //c.CsvString += ";" + "\"" + sCh.FullPath + "\"" + ";Type;;Folder" + "\n";
+                        c.CsvString += ";" + "\"" + mathOnDollar(sCh.FullPath, c) + "\"" + ";Type;;Folder" + "\n";
+                        c.CsvString += ";" + "\"" + fPath + "\"" + ";Type;;Folder" + "\n";
+                        //c.CsvString += ";" + "\"" + mathOnDollar(sCh.FullPath, c) + "\"" + ";Type;;Folder" + "\n";
+                    }
+
+
+
+                    //если сигнал имеет дочерние сигналы тогда вызываем себя ещё раз
+                    if (sCh.HasSignals)
+                    {
+                        goOnCycleForExcel(c, t, sCh, propStr);
+                    }
+                    //если сигнал имеет дочерние циклы то запускаем цикл
+                    if (sCh.HasCycles)
+                    {
+                        foreach (Cycle cCh in sCh.Cycles)
+                        {
+                            runCycleForExcel(cCh, t);
+                        }
+                    }
+                    ResetSignalsNames(listOfSignals);
+                }
+            }
+            // если цикл имеет дочерние циклы
+            if (c.HasCycles)
+            {
+                foreach (Cycle cCh in c.Cycles)
+                {
+                    runCycleForExcel(cCh, t);
+                }
+            }
+        }
+
+
+        #endregion
+
+        //Работа с набором вводных данных
+        #region work with input data
+
+        public static string getCsvPath(CsvVar csv, Template t)
+        {
+            if (csv is null) return null;
+            if (csv.Path.IndexOf(@":\") > 0)
+            {
+                return csv.Path;
+            }
+            else
+            {
+                return Path.GetDirectoryName(t.CurPath) + @"\" + csv.Path;
+            }
+        }
+
+        public static void setCsvVarPath(TempTabPage ttp)
+        {
+            int cvNum = 0;
+            foreach (DataGridViewRow row in ttp.dgProps.Rows)
+            {
+                ttp.Template.CsvVars[cvNum].Name = row.Cells[0].Value.ToString();
+                ttp.Template.CsvVars[cvNum].Path = row.Cells[1].Value.ToString();
+                ttp.Template.CsvVars[cvNum].Separator = row.Cells[2].Value.ToString().ToCharArray()[0];
+                switch (row.Cells[3].Value.ToString())
+                {
+                    case "Default":
+                        ttp.Template.CsvVars[cvNum].Encoding = Encoding.Default;
+                        break;
+                    case "ASCII":
+                        ttp.Template.CsvVars[cvNum].Encoding = Encoding.ASCII;
+                        break;
+                    case "UTF8":
+                        ttp.Template.CsvVars[cvNum].Encoding = Encoding.UTF8;
+                        break;
+                }
+                cvNum++;
+            }
+        }
+
+        #endregion
+
+        //Работа с подстановкой
+        #region work with replace
+        private static void replaceVariantsInNames(Cycle c, Signal s)
         {
             foreach (Variant v in c.Variatns)
             {
-
-                int val;
-                if (int.TryParse(v.Value, out val))
+                if (s.Name == v.NameS)
                 {
-                    v.Move();
-                  // v.setTempValue((val + 1).ToString());
-                }
-               // c.CsvString = c.CsvString.Replace(v.NameS, v.Value);
-            }
-        }
 
-        private static string replaceVariants(Cycle c, string csvStr)
-        {
-            foreach(Variant v in c.Variatns)
-            {
-                csvStr = replnmathVariant(csvStr, v);// csvStr.Replace(v.NameS, v.Value);
-            }
-            
-            return csvStr;
-        }
-
-        private static void replaceVariantsInNames(Cycle c, Signal s)
-        {
-            foreach(Variant v in c.Variatns)
-            {
-                if(s.Name == v.NameS)
-                {
-                    
                     s.setTempName(v.Value);
                 }
             }
 
             foreach (Variant v in c.Variatns)
             {
-                if (s.Name.IndexOf(v.NameS) >= 0 )
+                if (s.Name.IndexOf(v.NameS) >= 0)
                 {
 
                     s.setTempName(replnmathVariant(s.Name, v)); //s.Name.Replace(v.NameS,v.Value));
@@ -607,9 +1037,19 @@ namespace VisualTemplate
 
         }
 
+        private static string replaceVariants(Cycle c, string csvStr)
+        {
+            foreach (Variant v in c.Variatns)
+            {
+                csvStr = replnmathVariant(csvStr, v);// csvStr.Replace(v.NameS, v.Value);
+            }
+
+            return csvStr;
+        }
+
         private static void ResetSignalsNames(List<Signal> listOfSignals)
         {
-            foreach(Signal s in listOfSignals)
+            foreach (Signal s in listOfSignals)
             {
                 s.ResetName();
             }
@@ -619,15 +1059,15 @@ namespace VisualTemplate
         {
             int indOfdollar;
             if (fullStr is null) return null;
-            if(rStr != "$")
+            if (rStr != "$")
             {
                 indOfdollar = fullStr.IndexOf(rStr);
             }
             else
             {
-                if((indOfdollar= fullStr.IndexOf("$$"))<0)
+                if ((indOfdollar = fullStr.IndexOf("$$")) < 0)
                 {
-                    if((indOfdollar = fullStr.IndexOf("$+")) < 0)
+                    if ((indOfdollar = fullStr.IndexOf("$+")) < 0)
                     {
                         if ((indOfdollar = fullStr.IndexOf("$-")) < 0)
                         {
@@ -636,9 +1076,9 @@ namespace VisualTemplate
                     }
                 }
             }
-          
-          //  indOfdollar = fullStr.IndexOf("$");
-            
+
+            //  indOfdollar = fullStr.IndexOf("$");
+
             if (indOfdollar == -1) return fullStr;
             char[] fullStrCharArray = fullStr.ToCharArray();
             int modK = c.Counter;
@@ -716,7 +1156,7 @@ namespace VisualTemplate
             }
 
             fullStr = fullStr.Replace(remStr, modK.ToString());
-            if ( fullStr.Contains("$+") | fullStr.Contains("$-") | (rStr=="$"? fullStr.Contains("$$") : fullStr.Contains(rStr)))
+            if (fullStr.Contains("$+") | fullStr.Contains("$-") | (rStr == "$" ? fullStr.Contains("$$") : fullStr.Contains(rStr)))
             {
                 fullStr = mathOnDollar(fullStr, c, rStr);
             }
@@ -725,7 +1165,7 @@ namespace VisualTemplate
 
         static string replnmathVariant(string csvStr, Variant v)
         {
-            
+
             char[] fullStrCharArray = csvStr.ToCharArray(); //преобразовываем в массив символов
             int IndexOfVarName = csvStr.IndexOf(v.NameS); //ищем номер вхождения имени искомой переменной
             string remStr = v.NameS; //запоминаем строку для последующей замены
@@ -733,7 +1173,7 @@ namespace VisualTemplate
             int operand;
             string operandStr = "";
             string operation = "";
-            if (fullStrCharArray.Length > IndexOfVarNameEnd)  operation = fullStrCharArray[IndexOfVarNameEnd].ToString();
+            if (fullStrCharArray.Length > IndexOfVarNameEnd) operation = fullStrCharArray[IndexOfVarNameEnd].ToString();
 
             if (operation == "+" | operation == "-")
             {
@@ -760,7 +1200,7 @@ namespace VisualTemplate
 
             //запоминаем значение переменной для модификации
             int modPerem;
-            if(int.TryParse(v.Value, out modPerem))
+            if (int.TryParse(v.Value, out modPerem))
             {
                 int.TryParse(operandStr, out operand);
                 switch (operation)
@@ -784,7 +1224,7 @@ namespace VisualTemplate
             }
             else
             {
-                if (v.Value.IndexOf("\"\"")>0)
+                if (v.Value.IndexOf("\"\"") > 0)
                 {
                     csvStr = csvStr.Replace("\"" + remStr + "\"", v.Value);
                 }
@@ -792,25 +1232,25 @@ namespace VisualTemplate
                 {
                     csvStr = csvStr.Replace(remStr, v.Value);
                 }
-                
+
             }
-            
+
             if (csvStr.Contains(v.NameS))
             {
-                csvStr = replnmathVariant(csvStr,v);
+                csvStr = replnmathVariant(csvStr, v);
             }
             return csvStr;
         }
 
         private static void replaceInVarinatValue(Cycle c, Cycle pC)
         {
-            foreach(Variant v in c.Variatns)
+            foreach (Variant v in c.Variatns)
             {
                 if (v.Value.IndexOf("$") >= 0)
                 {
-                    foreach(Variant vp in pC.Variatns)
+                    foreach (Variant vp in pC.Variatns)
                     {
-                        if(v.Value == vp.NameS)
+                        if (v.Value == vp.NameS)
                         {
                             v.setTempValue(vp.Value);
                         }
@@ -819,110 +1259,22 @@ namespace VisualTemplate
             }
         }
 
-        private static void goOnCycle(Cycle c, Template t, Signal sParent = null, string propStr = "")
-        {
-            List<Signal> listOfSignals;
-            //если цикл имеет сигналы
-            if (c.HasSignals)
-            {
-                //если нет родительского сигнала, тогда перебираем элементы в цикле, иначе перебираем элементы в сигнале
-                if (sParent is null)
-                {
-                    listOfSignals = c.Signals;
-                }
-                else
-                {
-                    listOfSignals = sParent.Signals;
-                }
-
-                //Cycle prtCycle = getParentCycle(c);
-                //if (!(prtCycle is null)) replaceInVarinatValue(c, prtCycle);
-
-                //перебираем сигналы
-                foreach (Signal sCh in listOfSignals)
-                {
-                    replaceVariantsInNames(c, sCh);
-                    if (sCh.Name.IndexOf("$") > 0) sCh.setTempName(mathOnDollar(sCh.Name, c));
-                    //если у сигнала есть свойства тогда ...
-                    if (sCh.HasProperties)
-                    {
-                        //... перебираем и добавляем их в ...
-                        foreach (Property p in sCh.Properties)
-                        {
-                            // if (c.HasCsvString) c.CsvString += "\n";
-
-                            // if (p.Type == "String" && p.Value.Substring(0, 1) != "\"") p.Value = "\"" + p.Value + "\"";
-
-                            // Проверяем на ковычки:
-                            
-                            string csvStr = "\""+ sCh.FullPath +"\"" + "," + p.Id + "," + p.Type + "," + getNormQuotes(p);
-                        //    Console.WriteLine(csvStr);
-                            
-                            csvStr = replaceVariants(c, csvStr);
-                            csvStr = replaceParentVariant(csvStr, sCh);
-                            csvStr =  mathOnDollar(csvStr,c);
-                            
-                            //если у нас есть хоть одна переменная из родительского цикла
-                            // то перебираем все переменные из всех родительских циклов.
-                            //if (csvStr.IndexOf("$.") > 0)
-                            //{
-                            
-                        //    }
-                            //
-                            //здесь можно добавить функцию вывода
-                            //Console.WriteLine(csvStr);
-                            //
-
-                            c.CsvString += csvStr + "\n";
-                      }
-                    }
-
-                    //если сигнал имеет дочерние сигналы тогда вызываем себя ещё раз
-                    if (sCh.HasSignals)
-                    {
-                        goOnCycle(c, t, sCh, propStr);
-                    }
-                    //если сигнал имеет дочерние циклы то запускаем цикл
-                    if (sCh.HasCycles)
-                    {
-                        foreach (Cycle cCh in sCh.Cycles)
-                        {
-                            runCycle(cCh,t);
-                        }
-                    }
-                    ResetSignalsNames(listOfSignals);
-                }
-            }
-            // если цикл имеет дочерние циклы
-            if (c.HasCycles)
-            {
-                foreach (Cycle cCh in c.Cycles)
-                {
-                    runCycle(cCh,t);
-                }
-            }
-        }
-
         private static string getNormQuotes(Property p)
         {
+            if (p.Value == "") return p.Value;
             string outStr = p.Value;
             if (p.Type == "String" && outStr.Substring(0, 1) == "\"")
             {
-                outStr =  outStr.Remove(0,1);
-                if (outStr.IndexOf("\"", outStr.Length - 1)> 0)
+                outStr = outStr.Remove(0, 1);
+                if (outStr.IndexOf("\"", outStr.Length - 1) > 0)
                 {
-                    outStr = outStr.Remove(outStr.Length-1);
+                    outStr = outStr.Remove(outStr.Length - 1);
                 }
             }
 
-            if (p.Type == "String" && outStr != "" && outStr.IndexOf("\"",1) > 1 && outStr.IndexOf("\"", 1) != outStr.Length-1 && outStr.IndexOf("\"\"")<0)
+            if (p.Type == "String" && outStr != "" && outStr.IndexOf("\"", 1) > 1 && outStr.IndexOf("\"", 1) != outStr.Length - 1 && outStr.IndexOf("\"\"") < 0)
             {
-                outStr = outStr.Replace("\"","\"\"");
-                //outStr = outStr.Remove(0, 1);
-                //if (outStr.IndexOf("\"", outStr.Length - 1) > 0)
-                //{
-                //    outStr = outStr.Remove(outStr.Length - 1);
-                //}
+                outStr = outStr.Replace("\"", "\"\"");
             }
 
             if (p.Type == "String" && outStr.Substring(0, 1) != "\"") { outStr = "\"" + outStr + "\""; }
@@ -935,20 +1287,20 @@ namespace VisualTemplate
             string outStr = CsvStr;
             Cycle pCycle = getParentCycle(getParentCycle(sCh));
             int deep = 1;
-            
+
             while (!(pCycle is null))
             {
                 int p;
                 int indexOf = outStr.IndexOf("$@");
                 outStr = replaceVariants(pCycle, outStr);
-                while (indexOf>0 & int.TryParse(outStr[indexOf+2].ToString(), out p) )
+                while (indexOf > 0 & int.TryParse(outStr[indexOf + 2].ToString(), out p))
                 {
                     int od = 0;
                     int d = 0;
                     string rmbStr = "$@";
-                    for(int h = indexOf; h < outStr.Length; h++)
+                    for (int h = indexOf; h < outStr.Length; h++)
                     {
-                        if ( int.TryParse( outStr[h+2].ToString(),out od))
+                        if (int.TryParse(outStr[h + 2].ToString(), out od))
                         {
                             rmbStr += outStr[h + 2].ToString();
                             d = od;
@@ -958,14 +1310,14 @@ namespace VisualTemplate
                             break;
                         }
                     }
-                   // rmbStr += "$";
+                    // rmbStr += "$";
                     if (deep == d)
                     {
                         outStr = mathOnDollar(CsvStr, pCycle, rmbStr);
                         indexOf = outStr.IndexOf("$@");
                         //outStr = outStr.Replace(rmbStr, pCycle.Counter.ToString());
                     }
-                    
+
                 }
                 pCycle = getParentCycle(pCycle);
                 deep++;
@@ -973,209 +1325,9 @@ namespace VisualTemplate
             return outStr;
         }
 
+        #endregion
 
 
-        public static object getObjectFromTree(string key, int tempId)
-        {
-            int id;
-           if( int.TryParse(key, out id))
-            {
-                return getObject(id,  tempId);
-            }
-           else
-            {
-                return null;
-            }
-        }
-
-        private static object getObject(int id, int tempId)
-        {
-            return TemplatesPages[tempId].Elements[id];
-        }
-
-        public static Element getElementById(int id, int tempId)
-        {
-            return TemplatesPages[tempId].Elements[id] as Element;
-        }
-        public static Element getElementById(string key, int ttpId)
-        {
-            int id;
-            if (int.TryParse(key, out id))
-            {
-                return TemplatesPages[ttpId].Elements[id] as Element;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public static void ReplaceInTree(TreeNode trN, string find, string rep)
-        {
-            //Element el = getElementById(trN.Name);
-            //Service.Replace(el,find,rep);
-        }
-
-        public static void setVariants(Cycle c, DataGridView dgV)
-        {
-            int vNum = 0;
-            int st = 1;
-            foreach(DataGridViewRow row in dgV.Rows)
-            {
-                c.Variatns[vNum].Name = row.Cells[0].Value.ToString();
-                c.Variatns[vNum].Value = row.Cells[1].Value.ToString();
-                c.Variatns[vNum].Step =  int.TryParse(row.Cells[2].Value.ToString(), out st) ? st : 1;
-                vNum++;
-            }
-        }
-
-        public static void setCsvVarPath(TempTabPage ttp)
-        {
-            int cvNum = 0;
-            foreach (DataGridViewRow row in ttp.dgProps.Rows)
-            {
-                ttp.Template.CsvVars[cvNum].Name = row.Cells[0].Value.ToString();
-                ttp.Template.CsvVars[cvNum].Path = row.Cells[1].Value.ToString();
-                ttp.Template.CsvVars[cvNum].Separator = row.Cells[2].Value.ToString().ToCharArray()[0];
-                switch (row.Cells[3].Value.ToString())
-                {
-                    case "Default":
-                        ttp.Template.CsvVars[cvNum].Encoding = Encoding.Default;
-                        break;
-                    case "ASCII":
-                        ttp.Template.CsvVars[cvNum].Encoding = Encoding.ASCII;
-                        break;
-                    case "UTF8":
-                        ttp.Template.CsvVars[cvNum].Encoding = Encoding.UTF8;
-                        break;
-                }
-                cvNum++;
-            }
-        }
-
-        public static void setProperties(Signal s, DataGridView dgV, TreeNode trN = null)
-        {
-            int pNum = 0;
-            foreach (DataGridViewRow row in dgV.Rows)
-            {
-                s.Properties[pNum].Id = row.Cells[0].Value.ToString();
-                s.Properties[pNum].Type = row.Cells[1].Value.ToString();
-                s.Properties[pNum].Value = row.Cells[2].Value.ToString();
-                if (!(trN is null) && s.Properties[pNum].Id == "1")
-                {
-                    trN.ImageIndex = Service.getImgCodeById(s.Properties[pNum].Value);
-                    trN.SelectedImageIndex = Service.getImgCodeById(s.Properties[pNum].Value);
-                }
-                pNum++;
-            }
-        }
-
-        public static void getVariants(Cycle c, DataGridView dgV)
-        {
-            dgV.Rows.Clear();
-            foreach (Variant v in c.Variatns)
-            {
-                dgV.Rows.Add(v.Name, v.Value, v.Step);
-            }
-        }
-        public static void addCsvVar(TempTabPage ttp)
-        {
-            CsvVar csv = new CsvVar(@"C:\file.csv");
-            csv.Name = "Csv1";
-            csv.Separator = ';';
-            ttp.Template.Add(csv);
-        }
-
-        public static void getProperties(Signal s, DataGridView dgV, TreeNode trN = null)
-        {
-            dgV.Rows.Clear();
-            if(!(trN is null) )
-            {
-                trN.ImageIndex = 0;
-                trN.SelectedImageIndex = 0;
-            }
-            int rInd = 0;
-            foreach (Property p in s.Properties)
-            {
-                dgV.Rows.Add(p.Id, p.Type,p.Value);
-                dgV.Rows[rInd].Cells[2].Value = p.Value;
-                rInd++;
-                if(!(trN is null) && p.Id == "1")
-                {
-                        trN.ImageIndex = Service.getImgCodeById(p.Value);
-                        trN.SelectedImageIndex = Service.getImgCodeById(p.Value);
-                }
-            }
-        }
-
-        public static void getVariantsToAdd(Signal s, TempTabPage tmp)
-        {
-
-            tmp.dgVariants.Rows.Clear();
-            int r = 0;
-            Cycle c = getParentCycle(s);
-            bool one = false;
-
-
-            do
-            {
-                if (c.HasVariants)
-                {
-                    foreach (Variant v in c.Variatns)
-                    {
-                        tmp.dgVariants.Rows.Add();
-                        tmp.dgVariants.Rows[r].Cells[0].Value = v.Name;
-                        tmp.dgVariants.Rows[r].Cells[1].Value = v.Value;
-                        r++;
-                    }
-                }
-                c = getParentCycle(c);
-                if (c == null) return;
-
-                if (c.Parent == null & one == false)
-                {
-                    one = true;
-                }
-                else
-                {
-                    one = false;
-                }
-                
-            } while (c.Parent != null | one);
-
-
-            //while (c.Parent != null | one)
-            //{
-                
-            //    if (c.HasVariants)
-            //    {
-            //        foreach(Variant v in c.Variatns)
-            //        {
-            //            tmp.dgVariants.Rows.Add();
-            //            tmp.dgVariants.Rows[r].Cells[0].Value = v.Name;
-            //            tmp.dgVariants.Rows[r].Cells[1].Value = v.Value;
-            //            r++;
-            //        }
-            //    }
-            //    one = false;
-            //    c = getParentCycle(c);
-            //    if (c == null) return;
-            //}
-
-
-         
-        }
-
-        
-
-        public static void getCsvVars (TempTabPage ttp)
-        {
-            ttp.dgProps.Rows.Clear();
-            foreach (CsvVar cv in ttp.Template.CsvVars)
-            {
-                ttp.dgProps.Rows.Add(cv.Name,cv.Path, cv.Separator.ToString(), cv.encodingStr);
-            }
-        }
 
         public static void addCycle(TempTabPage ttp)
         {
@@ -1196,6 +1348,7 @@ namespace VisualTemplate
             ttp.Elements.Add(c);
             ttp.TreeView.SelectedNode = ttp.TreeView.SelectedNode.LastNode;
         }
+
         public static void addSignal(TempTabPage ttp)
         {
 
@@ -1318,7 +1471,6 @@ namespace VisualTemplate
             TypeOfProperty.Add("6", "Float");
             TypeOfProperty.Add("100", "String");
             TypeOfProperty.Add("101", "String");
-            TypeOfProperty.Add("6500", "String");
             TypeOfProperty.Add("5000", "String");
             TypeOfProperty.Add("5001", "String");
             TypeOfProperty.Add("5002", "VAR");
@@ -1337,6 +1489,7 @@ namespace VisualTemplate
             TypeOfProperty.Add("6004", "Bool");
             TypeOfProperty.Add("6005", "Bool");
             TypeOfProperty.Add("6100", "String");
+            TypeOfProperty.Add("6500", "String");
             TypeOfProperty.Add("7000", "Bool");
             TypeOfProperty.Add("8000", "Bool");
             TypeOfProperty.Add("9001", "Bool");
