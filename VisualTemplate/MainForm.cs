@@ -19,6 +19,15 @@ namespace VisualTemplate
     {
         private string oldFileName;
         public TempTabPage curTempTabPage;
+
+        public enum PropShowMode
+        {
+            showProperties,
+            showChildSignals
+        }
+
+        public PropShowMode curPropShowMode;
+
         public MainForm()
         {
             InitializeComponent();
@@ -27,6 +36,7 @@ namespace VisualTemplate
             {
                 openToolStripButton_Click(null, null);
             }
+            toolStripComboBox1.SelectedIndex = 0;
         }
 
         private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
@@ -125,13 +135,14 @@ namespace VisualTemplate
 
         private void folderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.addFolder(curTempTabPage);
+
+            Program.addElemnt(curTempTabPage);
             curTempTabPage.TreeView.SelectedNode.Expand();
         }
 
         private void signalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.addSignal(curTempTabPage);
+            Program.addElemnt(curTempTabPage, "8");
             curTempTabPage.TreeView.SelectedNode.Expand();
         }
 
@@ -152,9 +163,6 @@ namespace VisualTemplate
             {
                 openFileDialog1.FileName = Program.fileToOpen;
             }
-
-
-
 
             string[] q = openFileDialog1.SafeFileName.Split('.');
             closeToolStripButton.Enabled = true;
@@ -227,7 +235,9 @@ namespace VisualTemplate
             curTempTabPage.dgProps.LocationChanged += new System.EventHandler(this.LastColumnComboSelectionChanged);
             curTempTabPage.dgVariants.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellDoubleClick);
             curTempTabPage.dgProps.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellDoubleClick);
+            curTempTabPage.TreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
 
+            curTempTabPage.TreeView.ContextMenuStrip = trvContextMenu;
 
             curTempTabPage.TreeView.ImageList = imageListForTree;
             tabControl2.SelectedIndex = curTempTabPage.Id;
@@ -239,7 +249,7 @@ namespace VisualTemplate
         }
 
   
-    private void dgProps_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void dgProps_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var currentcell = curTempTabPage.dgProps.CurrentCellAddress;
 
@@ -268,23 +278,28 @@ namespace VisualTemplate
                 }
             }
 
-
-            
-
             string vNs = "$" + curTempTabPage.dgProps.Rows[currentcell.Y].Cells[0].Value.ToString() + "$";
 
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            //Настраиваем кнопки
+
             cycleToolStripMenuItem.Enabled = false;
             folderToolStripMenuItem.Enabled = false;
             signalToolStripMenuItem.Enabled = false;
             deleteToolStripButton2.Enabled = true;
+            удалитьToolStripMenuItem.Enabled = true;
             dublToolStripButton3.Enabled = false;
 
+            //******************************************
 
-            TempTabPage curTmp = Program.TemplatesPages[tabControl2.SelectedIndex];
+            TempTabPage curTmp;
+            if (Program.TemplatesPages.ContainsKey(tabControl2.SelectedIndex))
+                curTmp = Program.TemplatesPages[tabControl2.SelectedIndex];
+            else
+                return;
             TreeNode TrNdSel = curTmp.TreeView.SelectedNode;
             if(TrNdSel is null)
             {
@@ -328,69 +343,33 @@ namespace VisualTemplate
                 folderToolStripMenuItem.Enabled = true;
                 signalToolStripMenuItem.Enabled = true;
                 dublToolStripButton3.Enabled = true;
-                curTmp.dgProps.Columns.Clear();
-                DataGridViewComboBoxColumn cmbID = new DataGridViewComboBoxColumn();
-                cmbID.HeaderText = "ID";
-                DataGridViewComboBoxColumn cmbType = new DataGridViewComboBoxColumn();
-                cmbType.HeaderText = "Type";
-                foreach (string str in Program.TypeOfProperty.Keys)
+
+
+                if (curPropShowMode == PropShowMode.showProperties)
                 {
-                    cmbID.Items.Add(str);
+                     getSignalProperties(obj);
                 }
-
-                foreach (string str in Program.Types.Values)
+                else if (curPropShowMode == PropShowMode.showChildSignals)
                 {
-                    cmbType.Items.Add(str);
+                    getSignalChildElements(obj);
                 }
-
-                curTmp.dgProps.Columns.Add(cmbID);
-                curTmp.dgProps.Columns.Add(cmbType);
-                curTmp.dgProps.Columns.Add("Value", "Value");
-                curTmp.dgProps.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
-                curTmp.dgProps.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
-                curTmp.dgProps.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
-                curTmp.dgProps.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                Signal s = obj as Signal;
-
-                s.Properties.Sort(new PropertyComparer());
-
-                Program.getSettings(s, TrNdSel, curTmp.dgSettings);
-                Program.getProperties(s, curTmp.dgProps, TrNdSel);
-
-
-              //  if (curTempTabPage.dgVariants.Rows.Count < 1)
-                    Program.getVariantsToAdd(s, curTempTabPage);
-
-                if (s.Properties.Count > 0)
-                {
-                    toolStripButton1.Enabled = true;
-                    toolStripButton2.Enabled = true;
-                }
-                else
-                {
-                    toolStripButton1.Enabled = false;
-                    toolStripButton2.Enabled = false;
-                }
-
-
-
-                //dataGridVariants.Columns.Clear();
-                //dataGridVariants.Columns.Add("Name", "Name");
-                //dataGridVariants.Columns.Add("Value", "Value");
-                //dataGridVariants.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
-                //dataGridVariants.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
-
-                //Program.getVariants(Program.getParentCycle(s), dataGridVariants);
 
             }
             if (obj.GetType().ToString() == "VisualTemplate.Template")
             {
+                //Настраиваем кнопки
                 cycleToolStripMenuItem.Enabled = true;
                 deleteToolStripButton2.Enabled = false;
 
                 toolStripButton1.Enabled = false;
                 toolStripButton2.Enabled = false;
                 toolStripButton3.Enabled = false;
+
+
+                удалитьToolStripMenuItem.Enabled = false;
+
+                //****************************
+
 
                 Template t = obj as Template;
                 curTmp.dgProps.Columns.Clear();
@@ -435,6 +414,99 @@ namespace VisualTemplate
             toolStrip3.Enabled = true;
         }
 
+
+        private void getSignalChildElements(object obj)
+        {
+
+            curTempTabPage.dgProps.Columns.Clear();
+
+            curTempTabPage.dgProps.Columns.Add("name","name");
+            curTempTabPage.dgProps.Columns.Add("type","type");
+            curTempTabPage.dgProps.Columns.Add("descr", "descr");
+
+
+
+            curTempTabPage.dgProps.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgProps.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgProps.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgProps.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+
+            Signal s = obj as Signal;
+            
+
+            foreach(Signal sg in s.Signals)
+            {
+                if (sg.HasProperties && sg.HasProperty("1"))
+                {
+
+                    curTempTabPage.dgProps.Rows.Add(sg.Name, Program.CDTTypes[sg.getPropertyById("1").Value],sg.getPropertyById("101")!=null? sg.getPropertyById("101").Value:"");
+                }
+                
+            }
+
+            Program.getSettings(s, curTempTabPage.TreeView.SelectedNode, curTempTabPage.dgSettings);
+            Program.getVariantsToAdd(s, curTempTabPage);
+
+            if (s.Properties.Count > 0)
+            {
+                toolStripButton1.Enabled = true;
+                toolStripButton2.Enabled = true;
+            }
+            else
+            {
+                toolStripButton1.Enabled = false;
+                toolStripButton2.Enabled = false;
+            }
+        }
+
+
+        private void getSignalProperties(object obj)
+        {
+
+            curTempTabPage.dgProps.Columns.Clear();
+            DataGridViewComboBoxColumn cmbID = new DataGridViewComboBoxColumn();
+            cmbID.HeaderText = "ID";
+            DataGridViewComboBoxColumn cmbType = new DataGridViewComboBoxColumn();
+            cmbType.HeaderText = "Type";
+            foreach (string str in Program.TypeOfProperty.Keys)
+            {
+                cmbID.Items.Add(str);
+            }
+
+            foreach (string str in Program.Types.Values)
+            {
+                cmbType.Items.Add(str);
+            }
+
+            curTempTabPage.dgProps.Columns.Add(cmbID);
+            curTempTabPage.dgProps.Columns.Add(cmbType);
+            curTempTabPage.dgProps.Columns.Add("Value", "Value");
+            curTempTabPage.dgProps.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgProps.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgProps.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgProps.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            Signal s = obj as Signal;
+
+            s.Properties.Sort(new PropertyComparer());
+
+            Program.getSettings(s, curTempTabPage.TreeView.SelectedNode, curTempTabPage.dgSettings);
+            Program.getProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode);
+
+
+            //  if (curTempTabPage.dgVariants.Rows.Count < 1)
+            Program.getVariantsToAdd(s, curTempTabPage);
+
+            if (s.Properties.Count > 0)
+            {
+                toolStripButton1.Enabled = true;
+                toolStripButton2.Enabled = true;
+            }
+            else
+            {
+                toolStripButton1.Enabled = false;
+                toolStripButton2.Enabled = false;
+            }
+        }
 
         private void dataGridView2_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
@@ -1197,5 +1269,205 @@ namespace VisualTemplate
 
 
     }
+
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            curTempTabPage.TreeView.SelectedNode = e.Node;
+        }
+
+        private void удалитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.deleteSelected(curTempTabPage);
+        }
+
+        private void папкаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void циклToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addCycle(curTempTabPage);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void int1ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "Int1").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void uInt1ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "UInt1").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void int2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "Int2").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void uInt2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "UInt2").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void int4ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "Int4").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void uInt4ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "UInt4").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void int8ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "Int8").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void uInt8ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "UInt8").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void floatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "Float").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void doubleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "Double").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void boolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "Bool").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void stringToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.addElemnt(curTempTabPage, Program.CDTTypes.FirstOrDefault(x => x.Value == "String").Key);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void копироватьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pastToolStripButton1.Enabled = true;
+            Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
+            if (el is null) return;
+            switch (el.GetType().ToString())
+            {
+                case "VisualTemplate.Signal":
+                    Signal s = el as Signal;
+                    Program.bufElem = s;
+                    break;
+                case "VisualTemplate.Cycle":
+                    Cycle c = el as Cycle;
+                    Program.bufElem = c;
+                    break;
+            }
+        }
+
+        private void вставитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
+            Element copyEl = null;
+
+            if (curTempTabPage.TreeView.SelectedNode.Name == "0")
+            {
+                if (Program.bufElem.GetType().ToString() == "VisualTemplate.Cycle")
+                {
+
+                    Cycle bc = Program.bufElem as Cycle;
+                    copyEl = (Cycle)bc.Clone();
+                    curTempTabPage.Template.Cycles.Add((Cycle)copyEl);
+
+                    Program.newVarsInDic((Cycle)copyEl);
+                    Program.addToTree(copyEl, curTempTabPage.TreeView, curTempTabPage.Id, curTempTabPage.TreeView.SelectedNode);
+                    curTempTabPage.TreeView.SelectedNode.Expand();
+                    return;
+                }
+            }
+
+            if (el is null) return;
+            if (Program.bufElem.GetType().ToString() == "VisualTemplate.Signal")
+            {
+                Signal bs = Program.bufElem as Signal;
+                copyEl = (Signal)bs.Clone();
+                el.Add((Signal)copyEl);
+            }
+            else if (Program.bufElem.GetType().ToString() == "VisualTemplate.Cycle")
+            {
+                Cycle bc = Program.bufElem as Cycle;
+                copyEl = (Cycle)bc.Clone();
+
+                el.Add((Cycle)copyEl);
+                Program.newVarsInDic((Cycle)copyEl);
+            }
+
+            Program.addToTree(copyEl, curTempTabPage.TreeView, curTempTabPage.Id, curTempTabPage.TreeView.SelectedNode);
+            curTempTabPage.TreeView.SelectedNode.Expand();
+        }
+
+        private void дублироватьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
+            Element dublEl = null;
+            if (el is null) return;
+            if (el.Parent is null) return;
+            switch (el.GetType().ToString())
+            {
+                case "VisualTemplate.Signal":
+                    Signal s = el as Signal;
+                    dublEl = (Signal)s.Clone();
+                    el.Parent.Signals.Add((Signal)dublEl);
+                    dublEl.restoreParent(el.Parent);
+                    Program.addToTree(dublEl, curTempTabPage.TreeView, curTempTabPage.Id, curTempTabPage.TreeView.SelectedNode.Parent);
+                    //curTempTabPage.TreeView.SelectedNode.Expand();
+                    break;
+                case "VisualTemplate.Cycle":
+                    Cycle c = el as Cycle;
+                    dublEl = (Cycle)c.Clone();
+                    el.Parent.Cycles.Add((Cycle)dublEl);
+                    dublEl.restoreParent(el.Parent);
+                    Program.addToTree(dublEl, curTempTabPage.TreeView, curTempTabPage.Id, curTempTabPage.TreeView.SelectedNode.Parent);
+
+                    //curTempTabPage.TreeView.SelectedNode.Expand();
+                    break;
+            }
+        }
+
+
+
+        private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ToolStripComboBox ts = sender as ToolStripComboBox;
+
+            switch(ts.SelectedIndex)
+            {
+                case 0:
+                    curPropShowMode = PropShowMode.showProperties;
+                    
+                    break;
+                case 1:
+                    curPropShowMode = PropShowMode.showChildSignals;
+                    break;
+            }
+            treeView1_AfterSelect(null, null);
+        }
     }
 }

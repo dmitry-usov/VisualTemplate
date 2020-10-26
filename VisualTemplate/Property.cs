@@ -51,6 +51,8 @@ namespace VisualTemplate
             Value = value;
         }
 
+        
+
         private int getImgCodeByType(string type)
         {
             switch (type)

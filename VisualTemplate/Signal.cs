@@ -65,6 +65,37 @@ namespace VisualTemplate
             }
         }
 
+        public bool HasProperty(string propId)
+        {
+            if (HasProperties)
+            {
+                foreach(Property pr in Properties)
+                {
+                    if (pr.Id == propId) return true;
+                }
+                return false;
+            }
+            {
+                return false;
+            } 
+        }
+
+        public Property getPropertyById(string propId)
+        {
+            if (HasProperty(propId))
+            {
+                foreach(Property pr in Properties)
+                {
+                    if (pr.Id == propId) return pr;
+                }
+                return null;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public Signal(string name)
         {
             _elements = new ArrayList();

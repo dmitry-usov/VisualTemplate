@@ -127,6 +127,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -156,6 +157,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="browser-page-text-1 %281%29.ico" />
+    <None Include="Resources\bin-1.png" />
+    <None Include="Resources\Paste_16x.png" />
+    <None Include="Resources\Copy_16x.png" />
+    <None Include="Resources\synchronize-arrows-three.png" />
+    <None Include="Resources\list-to-doLM.png" />
+    <None Include="Resources\task-list-multiple.png" />
+    <None Include="Resources\list-to-do.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

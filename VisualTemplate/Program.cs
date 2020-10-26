@@ -318,6 +318,7 @@ namespace VisualTemplate
             var sr = new StreamReader(fs);
             string jsonStr = sr.ReadToEnd();
             opTmp.Template = JsonConvert.DeserializeObject<Template>(jsonStr);
+            opTmp.Template.Name = FileName.Split(@"\\".ToArray())[FileName.Split(@"\\".ToArray()).Length-1].Replace(".jvt", ""); // op.SafeFileName.Replace(".jvt", "");
             opTmp.Template.CurPath = FileName;
             RestoreParentsInTemplate(opTmp.Template);
 
@@ -1366,7 +1367,7 @@ namespace VisualTemplate
             ttp.TreeView.SelectedNode = ttp.TreeView.SelectedNode.LastNode;
         }
 
-        public static void addSignal(TempTabPage ttp)
+        public static void addElemnt(TempTabPage ttp, string prop = null)
         {
 
             Signal s = new Signal("Signal");
@@ -1374,13 +1375,10 @@ namespace VisualTemplate
             Element curElement = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id);
             if (curElement is null) return;
             curElement.Add(s);
-
-
             s.Id = ttp.Elements.Count.ToString();
-           ttp.TreeView.SelectedNode.Nodes.Add(s.Id, s.ToString(), 0);
+            ttp.TreeView.SelectedNode.Nodes.Add(s.Id, s.ToString(), 0);
             ttp.Elements.Add(s);
-
-            s.Add(new Property("1", "UInt4", "8"));
+            if (prop != null) s.Add(new Property("1", "UInt4", prop));
             ttp.TreeView.SelectedNode = ttp.TreeView.SelectedNode.LastNode;
         }
 
@@ -1428,21 +1426,7 @@ namespace VisualTemplate
 
         }
 
-        public static void addFolder(TempTabPage ttp)
-        {
 
-            Signal s = new Signal("Folder");
-            if (ttp.TreeView.SelectedNode is null) return;
-            Element curElement = getElementById(ttp.TreeView.SelectedNode.Name, ttp.Id);
-            if (curElement is null) return;
-            curElement.Add(s);
-
-
-            s.Id = ttp.Elements.Count.ToString();
-            ttp.TreeView.SelectedNode.Nodes.Add(s.Id, s.ToString(), 0);
-            ttp.Elements.Add(s);
-            ttp.TreeView.SelectedNode = ttp.TreeView.SelectedNode.LastNode;
-        }
 
         internal static void saveMaster(string fileName)
         {

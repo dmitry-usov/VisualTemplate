@@ -180,7 +180,11 @@ namespace VisualTemplate
         public int CompareTo(object obj)
         {
             Cycle c = obj as Cycle;
-            return this.ToString().CompareTo(c.ToString());
+            if (Name != null && c.Name != null)
+                return this.Name.ToString().CompareTo(c.Name.ToString());
+            else
+                return this.ToString().CompareTo(c.ToString());
+            
         }
     }
 }
