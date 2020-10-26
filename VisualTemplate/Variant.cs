@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VisualTemplate
 {
-   public class Variant : ICloneable
+   public class Variant : ICloneable, IComparable
     {
         private string _value;
         public string Name { get; set; }
@@ -77,6 +77,11 @@ namespace VisualTemplate
             Variant v = new Variant(Name, Value,"");
             v.Step = Step;
             return v;
+        }
+
+        public int CompareTo(object obj)
+        {
+            return Name.CompareTo(obj);
         }
     }
 }

@@ -23,6 +23,10 @@ namespace VisualTemplate
         {
             InitializeComponent();
             splitContainer1.Panel1Collapsed = true;
+            if (Program.fileToOpen != null)
+            {
+                openToolStripButton_Click(null, null);
+            }
         }
 
         private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
@@ -132,17 +136,29 @@ namespace VisualTemplate
         }
 
 
-        private void openToolStripButton_Click(object sender, EventArgs e)
+        public void openToolStripButton_Click(object sender, EventArgs e )
         {
-
-            openFileDialog1.Filter = "json files (*.json)|*.json|master file (*.xml)|*.xml|All files (*.*)|*.*";
-            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+            openFileDialog1.Filter = "jvt files (*.jvt)|*.jvt|master file (*.xmlvt)|*.xmlvt|All files (*.*)|*.*";
+            DialogResult dgr;
+            if (Program.fileToOpen == null)
             {
-                return;
+                dgr = openFileDialog1.ShowDialog();
+                if (dgr == DialogResult.Cancel)
+                {
+                    return;
+                }
             }
+            else
+            {
+                openFileDialog1.FileName = Program.fileToOpen;
+            }
+
+
+
+
             string[] q = openFileDialog1.SafeFileName.Split('.');
             closeToolStripButton.Enabled = true;
-            if (q[q.Length-1] == "json")
+            if (q[q.Length-1] == "jvt")
             {
 
                 curTempTabPage = Program.CreateNewTemplate();
@@ -153,13 +169,12 @@ namespace VisualTemplate
 
                 curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
             }
-            else if (q[q.Length - 1] == "xml")
+            else if (q[q.Length - 1] == "xmlvt")
             {
                // XmlSerializer formatter = new XmlSerializer(typeof(Master));
                 using (FileStream fs = new FileStream(openFileDialog1.FileName, FileMode.OpenOrCreate))
                 {
                     //Program.MasterFile = (Master)formatter.Deserialize(fs);
-
                 }
 
                 Program.MasterFile.curPath = openFileDialog1.FileName.Replace(openFileDialog1.SafeFileName,"");
@@ -167,7 +182,7 @@ namespace VisualTemplate
                 Program.MasterFile.Files.Clear();
                 Program.MasterFile.tempTabPagesDic.Clear();
                 DirectoryInfo di = new DirectoryInfo(openFileDialog1.FileName.Replace(openFileDialog1.SafeFileName, ""));
-                foreach(FileInfo fi in di.GetFiles("*.json"))
+                foreach(FileInfo fi in di.GetFiles("*.jvt"))
                 {
                     Program.MasterFile.Files.Add(fi.Name);
                 }
@@ -176,8 +191,8 @@ namespace VisualTemplate
                 {
                     curTempTabPage = Program.CreateNewTemplate();
                     curTempTabPage.Id = tabControl2.TabPages.Count;
-                   if( Program.loadTemplate(Program.MasterFile.curPath + s, curTempTabPage) == true)
-                   Program.MasterFile.tempTabPagesDic.Add(curTempTabPage.Id, curTempTabPage);
+                    if( Program.loadTemplate(Program.MasterFile.curPath + s, curTempTabPage) == true)
+                    Program.MasterFile.tempTabPagesDic.Add(curTempTabPage.Id, curTempTabPage);
                     setVisualToPage();
                     curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
                 }
@@ -185,6 +200,7 @@ namespace VisualTemplate
                 Program.openMaster(treeMasterView);
                 treeMasterView.Nodes[0].Text = openFileDialog1.SafeFileName;
             }
+            Program.fileToOpen = null;
         }
 
         private void setVisualToPage()
@@ -335,6 +351,9 @@ namespace VisualTemplate
                 curTmp.dgProps.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
                 curTmp.dgProps.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 Signal s = obj as Signal;
+
+                s.Properties.Sort(new PropertyComparer());
+
                 Program.getSettings(s, TrNdSel, curTmp.dgSettings);
                 Program.getProperties(s, curTmp.dgProps, TrNdSel);
 
@@ -1001,7 +1020,7 @@ namespace VisualTemplate
         {
             if(curTempTabPage.Template.CurPath is null)
             {
-                saveFileDialog1.Filter = "json files (*.json)|*.json|All files (*.*)|*.*";
+                saveFileDialog1.Filter = "jvt files (*.jvt)|*.jvt|All files (*.*)|*.*";
                 saveFileDialog1.FileName = curTempTabPage.Template.Name;
                 if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
                 {
@@ -1076,7 +1095,7 @@ namespace VisualTemplate
         {
             if (Program.MasterFile.curPath is null)
             {
-                saveFileDialog1.Filter = "master file (*.xml)|*.xml|All files (*.*)|*.*";
+                saveFileDialog1.Filter = "master file (*.xmlvt)|*.xmlvt|All files (*.*)|*.*";
                 if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
                 {
                     return;

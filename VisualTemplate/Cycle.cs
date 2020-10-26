@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace VisualTemplate 
 {
-    public class Cycle : Element, ICloneable
+    public class Cycle : Element, ICloneable, IComparable
     {
         public List<Variant> Variatns { get; set; }
 
@@ -177,5 +177,10 @@ namespace VisualTemplate
             return c;
         }
 
+        public int CompareTo(object obj)
+        {
+            Cycle c = obj as Cycle;
+            return this.ToString().CompareTo(c.ToString());
+        }
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace VisualTemplate
 {
 
-    public class Signal : Element, ICloneable
+    public class Signal : Element, ICloneable, IComparable
     {
 
         [JsonIgnore]
@@ -111,6 +111,12 @@ namespace VisualTemplate
                 s.Add((Cycle)chC.Clone());
             }
             return s;
+        }
+
+        public int CompareTo(object o)
+        {
+            Signal s = o as Signal;
+            return this.Name.CompareTo(s.Name);
         }
     }
 }

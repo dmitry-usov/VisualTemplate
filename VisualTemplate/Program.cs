@@ -25,7 +25,7 @@ namespace VisualTemplate
 
 
         static string templateFilePath = _curDir;
-        static string templateFileName = "data.json";
+        static string templateFileName = "data.jvt";
         static string templateFullFileName = templateFilePath + @"\" + templateFileName;
 
         public static Dictionary<string, string> TypeOfProperty;
@@ -44,14 +44,16 @@ namespace VisualTemplate
 
         public static string globalCsvString ="";
 
+        public static string fileToOpen;
+
         public static Template t;
 
         public static MainForm pMainForm;
 
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            
+           // MessageBox.Show(args[0]);
             TemplatesPages = new Dictionary<int, TempTabPage>();
            MasterFile = new Master() ;
             //MasterFile.Files.Add("diag");
@@ -67,9 +69,15 @@ namespace VisualTemplate
             VariantsDic = new Dictionary<string, Variant>();
             setDic();
 
+            if (args.Count() > 0)
+            {
+                fileToOpen = args[0];
+            }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(pMainForm = new MainForm());
+
+     
         }
 
         public static void newMaster(TreeView trV)
@@ -102,6 +110,8 @@ namespace VisualTemplate
 
                 TemplatesPages[tempId].Elements.Add(temp);
 
+                temp.Elements.Sort();
+
                 if (temp.HasElements)
                 {
                     foreach (object chObj in temp.Elements)
@@ -115,6 +125,10 @@ namespace VisualTemplate
             {
                 case "VisualTemplate.Cycle":
                     Cycle tempC = o as Cycle;
+
+                    tempC.Cycles.Sort();
+                    tempC.Signals.Sort();
+
                     tempC.Id = TemplatesPages[tempId].Elements.Count.ToString();
                     parentTreeNode = parentTreeNode.Nodes.Add(tempC.Id, tempC.ToString(), 15);
 
@@ -135,6 +149,9 @@ namespace VisualTemplate
                     tempS.Id = TemplatesPages[tempId].Elements.Count.ToString();
                     parentTreeNode = parentTreeNode.Nodes.Add(tempS.Id, tempS.Name, tempS.ImgCode);
                     TemplatesPages[tempId].Elements.Add(tempS);
+
+                    tempS.Cycles.Sort();
+                    tempS.Signals.Sort();
 
                     if (tempS.HasElements)
                     {
@@ -230,7 +247,7 @@ namespace VisualTemplate
         public static void saveTemplate(SaveFileDialog sf)
         {
             if (!(defaultPathJson is null)) sf.InitialDirectory = defaultPathJson;
-            sf.Filter = "json files (*.json)|*.json|All files (*.*)|*.*";
+            sf.Filter = "jvt files (*.jvt)|*.jvt|All files (*.*)|*.*";
             if (sf.ShowDialog() == DialogResult.Cancel)
             {
                 return;
@@ -278,7 +295,7 @@ namespace VisualTemplate
             var sr = new StreamReader(fs);
             string jsonStr = sr.ReadToEnd();
             opTmp.Template = JsonConvert.DeserializeObject<Template>(jsonStr);
-            opTmp.Template.Name = op.SafeFileName.Replace(".json","");
+            opTmp.Template.Name = op.SafeFileName.Replace(".jvt","");
             opTmp.Template.CurPath = op.FileName;
             RestoreParentsInTemplate(opTmp.Template);
 

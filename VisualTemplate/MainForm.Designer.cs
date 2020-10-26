@@ -98,6 +98,12 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeMasterView = new System.Windows.Forms.TreeView();
             this.button1 = new System.Windows.Forms.Button();
+            this.trvContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.добавитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.папкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.int1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ctx_treeView.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -109,6 +115,7 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.trvContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // ctx_treeView
@@ -761,6 +768,46 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // trvContextMenu
+            // 
+            this.trvContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.добавитьToolStripMenuItem,
+            this.удалитьToolStripMenuItem});
+            this.trvContextMenu.Name = "trvContextMenu";
+            this.trvContextMenu.Size = new System.Drawing.Size(127, 48);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
+            // добавитьToolStripMenuItem
+            // 
+            this.добавитьToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.папкаToolStripMenuItem,
+            this.int1ToolStripMenuItem});
+            this.добавитьToolStripMenuItem.Name = "добавитьToolStripMenuItem";
+            this.добавитьToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.добавитьToolStripMenuItem.Text = "Добавить";
+            // 
+            // удалитьToolStripMenuItem
+            // 
+            this.удалитьToolStripMenuItem.Name = "удалитьToolStripMenuItem";
+            this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.удалитьToolStripMenuItem.Text = "Удалить";
+            // 
+            // папкаToolStripMenuItem
+            // 
+            this.папкаToolStripMenuItem.Name = "папкаToolStripMenuItem";
+            this.папкаToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.папкаToolStripMenuItem.Text = "Папка";
+            // 
+            // int1ToolStripMenuItem
+            // 
+            this.int1ToolStripMenuItem.Name = "int1ToolStripMenuItem";
+            this.int1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.int1ToolStripMenuItem.Text = "Int1";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -795,6 +842,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.trvContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -869,6 +917,12 @@
         private System.Windows.Forms.TreeView treeMasterView;
         private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.ToolStripButton getForSignalExceltoolStripButton5;
+        private System.Windows.Forms.ContextMenuStrip trvContextMenu;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem добавитьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem папкаToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem int1ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem удалитьToolStripMenuItem;
     }
 }
 

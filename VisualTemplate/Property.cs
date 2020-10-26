@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VisualTemplate
 {
-   public class Property: ICloneable
+   public class Property: ICloneable, IComparable
     {
         private string _id;
         public string Id
@@ -303,6 +303,25 @@ namespace VisualTemplate
         public object Clone()
         {
             return new Property(Id, Type, Value);
+        }
+
+        public int CompareTo(object obj)
+        {
+            Property p = obj as Property;
+            return Id.CompareTo(p.Id);
+        }
+    }
+
+    public class PropertyComparer : IComparer<Property>
+    {
+        public int Compare(Property p1, Property p2)
+        {
+            if (int.Parse(p1.Id) > int.Parse(p2.Id))
+                return 1;
+            else if (int.Parse(p1.Id) < int.Parse(p2.Id))
+                return -1;
+            else
+                return 0;            
         }
     }
 }
