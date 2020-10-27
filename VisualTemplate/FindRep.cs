@@ -26,7 +26,7 @@ namespace VisualTemplate
 
         private void bt_Replace_Click(object sender, EventArgs e)
         {
-            _main.StartReplace(textBox1.Text, textBox2.Text);
+           // _main.StartReplace(textBox1.Text, textBox2.Text);
             MessageBox.Show("Замена выполнена!");
            
         }

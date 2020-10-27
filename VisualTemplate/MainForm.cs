@@ -36,7 +36,6 @@ namespace VisualTemplate
             {
                 openToolStripButton_Click(null, null);
             }
-            toolStripComboBox1.SelectedIndex = 0;
         }
 
         private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
@@ -57,24 +56,6 @@ namespace VisualTemplate
             if (Program.MasterFile is null) Program.newMaster(treeMasterView);
 
             setVisualToPage();
-
-            //curTempTabPage.TreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
-            //curTempTabPage.dgSettings.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
-            //curTempTabPage.dgProps.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridProps_CellEndEdit);
-            //curTempTabPage.dgSettings.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSettings_CellClick);
-            //curTempTabPage.dgProps.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
-            //curTempTabPage.dgProps.LocationChanged += new System.EventHandler(this.LastColumnComboSelectionChanged);
-            //curTempTabPage.dgSettings.Columns.Add("Param", "Имя");
-            //curTempTabPage.dgSettings.Columns.Add("Value", "Значение");
-            //curTempTabPage.dgSettings.Columns.Add("", "");
-            //curTempTabPage.dgSettings.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
-            //curTempTabPage.dgSettings.Columns[0].Width = 70;
-            //curTempTabPage.dgSettings.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
-            //curTempTabPage.dgSettings.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
-            //curTempTabPage.dgSettings.Columns[2].Width = 50;
-            //tabControl2.SelectedIndex = curTempTabPage.Id;
-            //toolStripStatusLabel1.Text = Program.TemplatesPages.Count.ToString();
-            //curTempTabPage.TreeView.ImageList = imageListForTree;
 
 
             curTempTabPage.Changed = true;
@@ -252,7 +233,10 @@ namespace VisualTemplate
         private void dgProps_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var currentcell = curTempTabPage.dgProps.CurrentCellAddress;
-
+            if(curPropShowMode == PropShowMode.showChildSignals)
+            {
+                return;
+            }
 
             if (curTempTabPage.TreeView.SelectedNode.Name == "0")
             {
@@ -294,6 +278,8 @@ namespace VisualTemplate
             dublToolStripButton3.Enabled = false;
 
             //******************************************
+
+            curPropShowMode = PropShowMode.showProperties;
 
             TempTabPage curTmp;
             if (Program.TemplatesPages.ContainsKey(tabControl2.SelectedIndex))
@@ -344,15 +330,7 @@ namespace VisualTemplate
                 signalToolStripMenuItem.Enabled = true;
                 dublToolStripButton3.Enabled = true;
 
-
-                if (curPropShowMode == PropShowMode.showProperties)
-                {
-                     getSignalProperties(obj);
-                }
-                else if (curPropShowMode == PropShowMode.showChildSignals)
-                {
-                    getSignalChildElements(obj);
-                }
+                getSignalProperties(obj);
 
             }
             if (obj.GetType().ToString() == "VisualTemplate.Template")
@@ -424,11 +402,11 @@ namespace VisualTemplate
             curTempTabPage.dgProps.Columns.Add("type","type");
             curTempTabPage.dgProps.Columns.Add("descr", "descr");
 
+            curTempTabPage.dgProps.ColumnHeadersVisible = true;
 
-
-            curTempTabPage.dgProps.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
-            curTempTabPage.dgProps.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
-            curTempTabPage.dgProps.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+            curTempTabPage.dgProps.Columns[0].SortMode = DataGridViewColumnSortMode.Automatic;
+            curTempTabPage.dgProps.Columns[1].SortMode = DataGridViewColumnSortMode.Automatic;
+            curTempTabPage.dgProps.Columns[2].SortMode = DataGridViewColumnSortMode.Automatic;
             curTempTabPage.dgProps.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
             Signal s = obj as Signal;
@@ -477,6 +455,8 @@ namespace VisualTemplate
             {
                 cmbType.Items.Add(str);
             }
+
+            curTempTabPage.dgProps.ColumnHeadersVisible = false;
 
             curTempTabPage.dgProps.Columns.Add(cmbID);
             curTempTabPage.dgProps.Columns.Add(cmbType);
@@ -587,51 +567,28 @@ namespace VisualTemplate
             toolStripStatusLabel1.Text = vNs + " - готово для вставки";
         }
 
-        public void StartReplace(string str1, string str2)
-        {
-          //  Program.ReplaceInTree(treeView1.SelectedNode, str1, str2);
-        }
 
 
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        //    treeView1.ExpandAll();
-        }
-
-        private void bt_Open_Click(object sender, EventArgs e)
-        {
-          //  Program.loadTemplate(openFileDialog1, treeView1);
-        }
 
         private void bt_Save_Click(object sender, EventArgs e)
         {
             Program.saveTemplate(saveFileDialog1);
         }
 
-        private void bt_Delete_Click(object sender, EventArgs e)
-        {
-           // Program.deleteSelected(treeView1.SelectedNode);
-        }
 
-        private void bt_AddCycle_Click(object sender, EventArgs e)
-        {
-           // Program.addCycle(treeView1.SelectedNode);
-         //   treeView1.SelectedNode.Expand();
-        }
 
-        private void bt_AddSignal_Click(object sender, EventArgs e)
-        {
 
-        }
 
 
 
 
         private void dataGridProps_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
+
             curTempTabPage.dgProps.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellDoubleClick);
-            if (curTempTabPage.TreeView.SelectedNode.Name == "0")
+
+            if (curPropShowMode == PropShowMode.showChildSignals) return;           if (curTempTabPage.TreeView.SelectedNode.Name == "0")
             {
                 Program.setCsvVarPath(curTempTabPage);
                 
@@ -670,63 +627,6 @@ namespace VisualTemplate
             oldFileName = curTempTabPage.Template.Name;
         }
 
-        //private void bt_AddPoV_Click(object sender, EventArgs e)
-        //{
-        //    if (treeView1.SelectedNode is null) return;
-        //    if (treeView1.SelectedNode.Name == "0")
-        //    {
-        //        Program.addCsvVar(curTempTabPage);
-        //        Program.getCsvVars(curTempTabPage);
-        //    }
-        //    else
-        //    {
-        //        Element el = Program.getElementById(treeView1.SelectedNode.Name, tabControl2.SelectedIndex);
-        //        if (el is null) return;
-        //        switch (el.GetType().ToString())
-        //        {
-        //            case "VisualTemplate.Signal":
-        //                Signal s = el as Signal;
-        //                s.Add(new Property("1", "UInt4", "8"));
-        //                Program.getProperties(s, dataGridProps, treeView1.SelectedNode);
-        //                break;
-        //            case "VisualTemplate.Cycle":
-        //                Cycle c = el as Cycle;
-        //                Program.addVariant(c);
-        //              //  c.Add(new Variant("name", "value"));
-        //                Program.getVariants(c, dataGridProps);
-        //                break;
-        //        }
-        //    }
-        //}
-
-        //private void bt_DeletePoV_Click(object sender, EventArgs e)
-        //{
-
-        //    if (treeView1.SelectedNode is null) return;
-        //    if (treeView1.SelectedNode.Name == "0")
-        //    {
-        //        Program.t.CsvVars.RemoveAt(dataGridProps.SelectedCells[0].RowIndex);
-        //       // Program.getCsvVars(dataGridProps);
-        //    }
-        //    else
-        //    {
-
-        //        Element el = Program.getElementById(treeView1.SelectedNode.Name, tabControl2.SelectedIndex);
-        //        switch (el.GetType().ToString())
-        //        {
-        //            case "VisualTemplate.Signal":
-        //                Signal s = el as Signal;
-        //                s.Properties.RemoveAt(dataGridProps.SelectedCells[0].RowIndex);
-        //                Program.getProperties(s, dataGridProps, treeView1.SelectedNode);
-        //                break;
-        //            case "VisualTemplate.Cycle":
-        //                Cycle c = el as Cycle;
-        //                c.Variatns.RemoveAt(dataGridProps.SelectedCells[0].RowIndex);
-        //                Program.getVariants(c, dataGridProps);
-        //                break;
-        //        }
-        //    }
-        //}
 
         private void bt_getCsv_Click(object sender, EventArgs e)
         {
@@ -749,129 +649,6 @@ namespace VisualTemplate
 
         }
 
-        private void bt_Copy_Click(object sender, EventArgs e)
-        {
-            //Element el = Program.getElementById(treeView1.SelectedNode.Name, tabControl2.SelectedIndex);
-            //switch (el.GetType().ToString())
-            //{
-            //    case "VisualTemplate.Signal":
-            //        Signal s = el as Signal;
-            //        Program.bufElem = s;
-            //        break;
-            //    case "VisualTemplate.Cycle":
-            //        Cycle c = el as Cycle;
-            //        Program.bufElem = c;
-            //        break;
-            //}
-        }
-
-        //private void bt_Past_Click(object sender, EventArgs e)
-        //{
-        //    Element el = Program.getElementById(treeView1.SelectedNode.Name, tabControl2.SelectedIndex);
-        //    Element copyEl=null;
-        //    //switch (el.GetType().ToString())
-        //    //{
-        //    //    case "VisualTemplate.Signal":
-        //    //        Signal s = el as Signal;
-
-
-        //    //        //s.Add((Signal)Program.bufSignal.Clone());
-
-        //    //        break;
-        //    //    case "VisualTemplate.Cycle":
-        //    //        Cycle c = el as Cycle;
-        //    //        c.Add((Signal)Program.bufSignal.Clone());
-        //    //        //treeView1.Nodes.Clear();
-        //    //        //Program.addToTree(Program.t, treeView1);
-        //    //        //treeView1.ExpandAll();
-        //    //        break;
-        //    //}
-
-        //    if (Program.bufElem.GetType().ToString() == "VisualTemplate.Signal")
-        //    {
-        //        Signal bs = Program.bufElem as Signal;
-        //        copyEl = (Signal)bs.Clone();
-        //        el.Add((Signal)copyEl);
-        //    }
-        //    else if (Program.bufElem.GetType().ToString() == "VisualTemplate.Cycle")
-        //    {
-        //        Cycle bc = Program.bufElem as Cycle;
-        //        copyEl = (Cycle)bc.Clone();
-
-        //        el.Add((Cycle)copyEl);
-        //        Program.newVarsInDic((Cycle)copyEl);
-        //    }
-
-        //  //  Program.addToTree(copyEl, treeView1, treeView1.SelectedNode);
-
-        //   // treeView1.Nodes.Clear();
-        //  //  Program.addToTree(Program.t, treeView1);
-        // //   treeView1.Nodes[0].Expand();
-        //  //  treeView1.ExpandAll();
-        //}
-
-        //private void bt_CopyProp_Click(object sender, EventArgs e)
-        //{
-        //    Element el = Program.getElementById(treeView1.SelectedNode.Name, tabControl2.SelectedIndex);
-        //    switch (el.GetType().ToString())
-        //    {
-        //        case "VisualTemplate.Signal":
-        //            Signal s = el as Signal;
-        //            Property p = s.Properties[dataGridProps.SelectedCells[0].RowIndex];
-        //            Program.bufProp = p;
-        //            break;
-        //        case "VisualTemplate.Cycle":
-        //            Cycle c = el as Cycle;
-        //            Variant v = c.Variatns[dataGridProps.SelectedCells[0].RowIndex];
-        //            Program.bufVar = v;
-        //            break;
-        //    }
-        //}
-
-        //private void bt_PastProp_Click(object sender, EventArgs e)
-        //{
-        //    Element el = Program.getElementById(treeView1.SelectedNode.Name, tabControl2.SelectedIndex);
-        //    switch (el.GetType().ToString())
-        //    {
-        //        case "VisualTemplate.Signal":
-        //            Signal s = el as Signal;
-        //            s.Add((Property)Program.bufProp.Clone());
-        //            Program.getProperties(s, dataGridProps, treeView1.SelectedNode);
-        //            break;
-        //        case "VisualTemplate.Cycle":
-        //            Cycle c = el as Cycle;
-        //            Variant v = (Variant)Program.bufVar.Clone();
-        //            Program.setIdtoVar(v);
-        //            c.Add(v);
-        //            Program.getVariants(c, dataGridProps);
-        //            break;
-        //    }
-        //}
-
-        //private void bt_PastLink_Click(object sender, EventArgs e)
-        //{
-        //    Element el = Program.getElementById(treeView1.SelectedNode.Name, tabControl2.SelectedIndex);
-        //    switch (el.GetType().ToString())
-        //    {
-        //        case "VisualTemplate.Signal":
-        //            break;
-        //        case "VisualTemplate.Cycle":
-        //            Cycle c = el as Cycle;
-        //            c.Add(Program.bufVar);
-        //            Program.bufVar.Link = Program.bufVar.Id;
-        //            treeView1.Nodes.Clear();
-        //           // Program.addToTree(Program.t, treeView1);
-        //            treeView1.Nodes[0].Expand();
-        //            break;
-        //    }
-        //}
-
-        //private void bt_reloadTr_Click(object sender, EventArgs e)
-        //{
-        //    treeView1.Nodes.Clear();
-        //  //  Program.addToTree(Program.t, treeView1);
-        //    treeView1.Nodes[0].Expand();
-        //}
 
 
  
@@ -884,10 +661,6 @@ namespace VisualTemplate
             }
         }
 
-        //private void ctx_copyPath_Click(object sender, EventArgs e)
-        //{
-        //    Clipboard.SetText(Program.getElementById(treeView1.SelectedNode.Name, tabControl2.SelectedIndex).FullPath);
-        //}
 
         private void copyToolStripButton4_Click(object sender, EventArgs e)
         {
@@ -927,23 +700,7 @@ namespace VisualTemplate
                     return;
                 }
             }
-            //switch (el.GetType().ToString())
-            //{
-            //    case "VisualTemplate.Signal":
-            //        Signal s = el as Signal;
 
-
-            //        //s.Add((Signal)Program.bufSignal.Clone());
-
-            //        break;
-            //    case "VisualTemplate.Cycle":
-            //        Cycle c = el as Cycle;
-            //        c.Add((Signal)Program.bufSignal.Clone());
-            //        //treeView1.Nodes.Clear();
-            //        //Program.addToTree(Program.t, treeView1);
-            //        //treeView1.ExpandAll();
-            //        break;
-            //}
             if (el is null) return;
             if (Program.bufElem.GetType().ToString() == "VisualTemplate.Signal")
             {
@@ -962,12 +719,7 @@ namespace VisualTemplate
             
             Program.addToTree(copyEl, curTempTabPage.TreeView, curTempTabPage.Id, curTempTabPage.TreeView.SelectedNode);
             curTempTabPage.TreeView.SelectedNode.Expand();
-            // curTempTabPage.TreeView.SelectedNode = curTempTabPage.TreeView.SelectedNode.LastNode;
 
-            // treeView1.Nodes.Clear();
-            //  Program.addToTree(Program.t, treeView1);
-            //   treeView1.Nodes[0].Expand();
-            //  treeView1.ExpandAll();
         }
 
         private void addPropToolStripButton1_Click(object sender, EventArgs e)
@@ -1143,10 +895,6 @@ namespace VisualTemplate
 
             new CSVEdit(curTempTabPage, csvName);
 
-
-            //Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
-            //Program.updateVarsFromCsv(curTempTabPage, el as Cycle);
-            //Program.getVariants(el as Cycle, curTempTabPage.dgProps);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -1451,23 +1199,11 @@ namespace VisualTemplate
             }
         }
 
-
-
-        private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void показатьДочерниеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ToolStripComboBox ts = sender as ToolStripComboBox;
-
-            switch(ts.SelectedIndex)
-            {
-                case 0:
-                    curPropShowMode = PropShowMode.showProperties;
-                    
-                    break;
-                case 1:
-                    curPropShowMode = PropShowMode.showChildSignals;
-                    break;
-            }
-            treeView1_AfterSelect(null, null);
+            object obj = Program.getObjectFromTree(curTempTabPage.TreeView.SelectedNode.Name, tabControl2.SelectedIndex);
+            getSignalChildElements(obj);
+            curPropShowMode = PropShowMode.showChildSignals;
         }
     }
 }
