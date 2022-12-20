@@ -43,6 +43,7 @@ namespace VisualTemplate
         [JsonIgnore]
         public string CurPath { get; set; }
         public string Name { get; set; }
+        public bool IsMetroProject { get; set; }
         public List<Cycle> Cycles { get; set; }
 
         public Template()

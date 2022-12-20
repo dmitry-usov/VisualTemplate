@@ -206,17 +206,23 @@ namespace VisualTemplate
 
 
             curTempTabPage.TreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            curTempTabPage.TreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
+            curTempTabPage.TreeView.MouseDoubleClick += new MouseEventHandler(this.treeView1_MouseDoubleClick);
+
             curTempTabPage.dgSettings.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
             curTempTabPage.dgSettings.CellBeginEdit += new DataGridViewCellCancelEventHandler(dgSettings_CellBeginEdit);
+            curTempTabPage.dgSettings.CellClick += new DataGridViewCellEventHandler(DataGridViewSetting_Click);
+            curTempTabPage.dgSettings.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSettings_CellClick);
+
             curTempTabPage.dgProps.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             curTempTabPage.dgProps.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridProps_CellEndEdit);
-            curTempTabPage.dgSettings.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSettings_CellClick);
             curTempTabPage.dgProps.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellClick);
             curTempTabPage.dgProps.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
             curTempTabPage.dgProps.LocationChanged += new System.EventHandler(this.LastColumnComboSelectionChanged);
-            curTempTabPage.dgVariants.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellDoubleClick);
             curTempTabPage.dgProps.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgProps_CellDoubleClick);
-            curTempTabPage.TreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
+            curTempTabPage.dgProps.KeyDown += new KeyEventHandler(this.dgProps_KeyDown);
+
+            curTempTabPage.dgVariants.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellDoubleClick);
 
             curTempTabPage.TreeView.ContextMenuStrip = trvContextMenu;
 
@@ -228,8 +234,34 @@ namespace VisualTemplate
 
 
         }
+        private void dgProps_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == System.Windows.Forms.Keys.V && e.Control)
+            {
+                curTempTabPage.dgProps.SelectedCells[0].Value = Clipboard.GetText();
 
-  
+                Element el = Program.getElementById(curTempTabPage.TreeView.SelectedNode.Name, curTempTabPage.Id);
+                if (el is null) return;
+                switch (el.GetType().ToString())
+                {
+                    case "VisualTemplate.Signal":
+                        Signal s = el as Signal;
+                        Program.setProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode, curTempTabPage.Template.IsMetroProject);
+                        break;
+                    case "VisualTemplate.Cycle":
+                        Cycle c = el as Cycle;
+                        Program.setVariants(c, curTempTabPage.dgProps);
+                        break;
+                }
+
+                if (!curTempTabPage.Changed)
+                {
+                    curTempTabPage.TabPage.Text += "*";
+                    curTempTabPage.Changed = true;
+                }
+            }
+        }
+
         private void dgProps_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             var currentcell = curTempTabPage.dgProps.CurrentCellAddress;
@@ -264,6 +296,13 @@ namespace VisualTemplate
 
             string vNs = "$" + curTempTabPage.dgProps.Rows[currentcell.Y].Cells[0].Value.ToString() + "$";
 
+        }
+
+
+        private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            Clipboard.SetData(DataFormats.Text, curTempTabPage.TreeView.SelectedNode.Text);
+            toolStripStatusLabel1.Text = curTempTabPage.TreeView.SelectedNode.Text + " - готово для вставки!";
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -456,9 +495,11 @@ namespace VisualTemplate
                 cmbType.Items.Add(str);
             }
 
-            curTempTabPage.dgProps.ColumnHeadersVisible = false;
 
-            curTempTabPage.dgProps.Columns.Add(cmbID);
+
+            //curTempTabPage.dgProps.ColumnHeadersVisible = false;
+
+                curTempTabPage.dgProps.Columns.Add(cmbID);
             curTempTabPage.dgProps.Columns.Add(cmbType);
             curTempTabPage.dgProps.Columns.Add("Value", "Value");
             curTempTabPage.dgProps.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -467,10 +508,18 @@ namespace VisualTemplate
             curTempTabPage.dgProps.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             Signal s = obj as Signal;
 
+            if (curTempTabPage.Template.IsMetroProject)
+            {
+                DataGridViewTextBoxColumn tbxColumn = new DataGridViewTextBoxColumn();
+                tbxColumn.Name = "Segment";
+                tbxColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+                curTempTabPage.dgProps.Columns.Add(tbxColumn);
+            }
+
             s.Properties.Sort(new PropertyComparer());
 
             Program.getSettings(s, curTempTabPage.TreeView.SelectedNode, curTempTabPage.dgSettings);
-            Program.getProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode);
+            Program.getProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode, curTempTabPage.Template.IsMetroProject);
 
 
             //  if (curTempTabPage.dgVariants.Rows.Count < 1)
@@ -488,6 +537,11 @@ namespace VisualTemplate
             }
         }
 
+        private void DataGridViewSetting_Click(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
         private void dataGridView2_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
 
@@ -498,8 +552,14 @@ namespace VisualTemplate
                 curTempTabPage.Template.Name = curTempTabPage.dgSettings.Rows[0].Cells[1].Value.ToString();
                 TrNdSel.Text = curTempTabPage.Template.Name;
                 curTempTabPage.TabPage.Text = curTempTabPage.Template.Name;
+                curTempTabPage.Template.IsMetroProject = (bool)curTempTabPage.dgSettings.Rows[1].Cells[1].Value;
                 if (oldFileName != curTempTabPage.Template.Name) curTempTabPage.Template.CurPath = null;
                 curTempTabPage.Changed = true;
+
+                if (e.RowIndex == 1 && e.ColumnIndex == 1)
+                {
+                    
+                }
             }
             else
             {
@@ -601,7 +661,7 @@ namespace VisualTemplate
                 {
                     case "VisualTemplate.Signal":
                         Signal s = el as Signal;
-                        Program.setProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode);
+                        Program.setProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode, curTempTabPage.Template.IsMetroProject);
                         break;
                     case "VisualTemplate.Cycle":
                         Cycle c = el as Cycle;
@@ -625,6 +685,10 @@ namespace VisualTemplate
         private void dgSettings_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
             oldFileName = curTempTabPage.Template.Name;
+            if (curTempTabPage.TreeView.SelectedNode.Name == "0" && e.RowIndex == 1 && e.ColumnIndex == 1)
+            {
+                curTempTabPage.Template.IsMetroProject = (bool)curTempTabPage.dgSettings.Rows[1].Cells[1].Value;
+            }
         }
 
 
@@ -739,7 +803,7 @@ namespace VisualTemplate
                     case "VisualTemplate.Signal":
                         Signal s = el as Signal;
                         s.Add(new Property("1", "UInt4", "8"));
-                        Program.getProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode);
+                        Program.getProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode, curTempTabPage.Template.IsMetroProject);
                         break;
                     case "VisualTemplate.Cycle":
                         Cycle c = el as Cycle;
@@ -776,7 +840,7 @@ namespace VisualTemplate
                     case "VisualTemplate.Signal":
                         Signal s = el as Signal;
                         s.Properties.RemoveAt(curTempTabPage.dgProps.SelectedCells[0].RowIndex);
-                        Program.getProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode);
+                        Program.getProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode, curTempTabPage.Template.IsMetroProject);
                         if (s.Properties.Count < 1)
                         {
                             toolStripButton1.Enabled = false;
@@ -824,7 +888,7 @@ namespace VisualTemplate
                 case "VisualTemplate.Signal":
                     Signal s = el as Signal;
                     s.Add((Property)Program.bufProp.Clone());
-                    Program.getProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode);
+                    Program.getProperties(s, curTempTabPage.dgProps, curTempTabPage.TreeView.SelectedNode, curTempTabPage.Template.IsMetroProject);
                     break;
                 case "VisualTemplate.Cycle":
                     Cycle c = el as Cycle;
@@ -889,7 +953,7 @@ namespace VisualTemplate
 
         private void dgProps_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex != 4) return;
+            if (e.ColumnIndex != 4 || curTempTabPage.TreeView.SelectedNode.Name != "0") return;
             string csvName = curTempTabPage.dgProps.Rows[e.RowIndex].Cells[0].Value.ToString();
             
 

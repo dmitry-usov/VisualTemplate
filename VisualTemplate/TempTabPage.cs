@@ -91,8 +91,9 @@ namespace VisualTemplate
                 AllowUserToResizeRows = false,
                 MultiSelect = false,
                 RowHeadersVisible = false,
-                BackgroundColor = Color.White
-                
+                BackgroundColor = Color.White,
+                ColumnHeadersVisible = true
+
             };
             sp_TreeNSet.Panel2.Controls.Add(dgSettings);
 
@@ -105,7 +106,8 @@ namespace VisualTemplate
                 AllowUserToResizeRows = false,
                 MultiSelect = false,
                 RowHeadersVisible = false,
-                BackgroundColor = Color.White
+                BackgroundColor = Color.White,
+                ColumnHeadersVisible = true
             };
             sp_PropsNAddr.Panel1.Controls.Add(dgProps);
 
@@ -120,7 +122,8 @@ namespace VisualTemplate
                 RowHeadersVisible = false,
                 ReadOnly = true,
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-                BackgroundColor = Color.White
+                BackgroundColor = Color.White,
+                ColumnHeadersVisible = true
             };
             sp_LinksNVariants.Panel1.Controls.Add(dgVariants);
 

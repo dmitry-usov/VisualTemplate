@@ -50,6 +50,7 @@ namespace VisualTemplate
 
         public static MainForm pMainForm;
 
+
         [STAThread]
         static void Main(string[] args)
         {
@@ -388,8 +389,18 @@ namespace VisualTemplate
 
         public static void getSettings(Template t, TreeNode teN, DataGridView dgV)
         {
+
+            DataGridViewRow rv = new DataGridViewRow();
+
+            DataGridViewCheckBoxCell chBoxCell = new DataGridViewCheckBoxCell() { Value = t.IsMetroProject };
+
+            rv.Cells.Add(new DataGridViewTextBoxCell() { Value = "Metro Project"});
+            rv.Cells.Add(chBoxCell);
+            //DataGridViewComboBoxCell dgcbc = new DataGridViewComboBoxCell();
             dgV.Rows.Clear();
             dgV.Rows.Add("Name", t.Name);
+            dgV.Rows.Add(rv);
+            //dgV.Rows.Add("IsMetroProject", dgcbc);
         }
 
         public static void newVarsInDic(Cycle c)
@@ -487,7 +498,7 @@ namespace VisualTemplate
             s.Name = ttp.dgSettings.Rows[0].Cells[1].Value.ToString();
         }
 
-        public static void setProperties(Signal s, DataGridView dgV, TreeNode trN = null)
+        public static void setProperties(Signal s, DataGridView dgV, TreeNode trN = null, bool isMetroProject = false)
         {
             int pNum = 0;
             foreach (DataGridViewRow row in dgV.Rows)
@@ -500,11 +511,17 @@ namespace VisualTemplate
                     trN.ImageIndex = Service.getImgCodeById(s.Properties[pNum].Value);
                     trN.SelectedImageIndex = Service.getImgCodeById(s.Properties[pNum].Value);
                 }
+
+                if(isMetroProject)
+                {
+                    s.Properties[pNum].Segment = row.Cells[3].Value == null ? "" : row.Cells[3].Value.ToString();
+                }
+
                 pNum++;
             }
         }
 
-        public static void getProperties(Signal s, DataGridView dgV, TreeNode trN = null)
+        public static void getProperties(Signal s, DataGridView dgV, TreeNode trN = null, bool isMetroProject = false)
         {
             dgV.Rows.Clear();
             if (!(trN is null))
@@ -517,12 +534,17 @@ namespace VisualTemplate
             {
                 dgV.Rows.Add(p.Id, p.Type, p.Value);
                 dgV.Rows[rInd].Cells[2].Value = p.Value;
-                rInd++;
+                
                 if (!(trN is null) && p.Id == "1")
                 {
                     trN.ImageIndex = Service.getImgCodeById(p.Value);
                     trN.SelectedImageIndex = Service.getImgCodeById(p.Value);
                 }
+                if(isMetroProject)
+                {
+                    dgV.Rows[rInd].Cells[3].Value = p.Segment;
+                }
+                rInd++;
             }
         }
 
@@ -899,17 +921,17 @@ namespace VisualTemplate
 
                             if (p.Id == "1")
                             {
-                                csvStr = ";" + "\"" + sCh.FullPath + "\"" + ";Type;;" + CDTTypes[p.Value];//+ p.Id + "," + p.Type + "," + getNormQuotes(p);
+                                csvStr = ";" + "\"" + sCh.FullPath + "\"" + ";Type;;" + CDTTypes[p.Value]+";;;"+p.Segment;//+ p.Id + "," + p.Type + "," + getNormQuotes(p);
                                 hasType = true;
                             }
                             else if(p.Id == "2")
                             {
-                                csvStr = ";" + "\"" + sCh.FullPath + "\"" + ";Value;;" + getNormQuotes(p);//+ p.Id + "," + p.Type + "," + getNormQuotes(p);
+                                csvStr = ";" + "\"" + sCh.FullPath + "\"" + ";Value;;" + getNormQuotes(p) + ";;;" + p.Segment;//+ p.Id + "," + p.Type + "," + getNormQuotes(p);
                                 hasType = true;
                             }
                             else if(p.Id == "3")
                             {
-                                csvStr = ";" + "\"" + sCh.FullPath + "\"" + ";Quality;;" + getNormQuotes(p);//+ p.Id + "," + p.Type + "," + getNormQuotes(p);
+                                csvStr = ";" + "\"" + sCh.FullPath + "\"" + ";Quality;;" + getNormQuotes(p) + ";;;" + p.Segment;//+ p.Id + "," + p.Type + "," + getNormQuotes(p);
                                 hasType = true;
                             }
                             else if(p.Id == "999004")
@@ -921,14 +943,14 @@ namespace VisualTemplate
                                     if(str[k] != "")
                                     {
                                         if (k != 0) csvStr += "\n";
-                                         csvStr += ";" + "\"" + sCh.FullPath + "\"" + ";" + p.Id + ";" + p.Type + ";" + str[k] ;
+                                         csvStr += ";" + "\"" + sCh.FullPath + "\"" + ";" + p.Id + ";" + p.Type + ";" + str[k] + ";;;" + p.Segment;
                                         //if (k != str.Length - 1) csvStr += "\n";
                                     }
                                 }
                             }
                             else
                             {
-                                 csvStr = ";" +  "\"" + sCh.FullPath + "\"" + ";" + p.Id + ";" + p.Type + ";" + getNormQuotes(p);
+                                 csvStr = ";" +  "\"" + sCh.FullPath + "\"" + ";" + p.Id + ";" + p.Type + ";" + getNormQuotes(p) + ";;;" + p.Segment;
                             }
 
                             csvStr = replaceVariants(c, csvStr);
@@ -943,7 +965,7 @@ namespace VisualTemplate
                             fPath = replaceVariants(c, fPath);
                             fPath = mathOnDollar(fPath, c);
 
-                            c.CsvString += ";" + "\"" + fPath + "\"" + ";Type;;Folder" + "\n";
+                            c.CsvString += ";" + "\"" + fPath + "\"" + ";Type;;Folder" + ";;;0" + "\n";
                             //c.CsvString += ";" + "\"" + mathOnDollar(sCh.FullPath,c) + "\"" + ";Type;;Folder" + "\n";
                         }
                     }
@@ -953,8 +975,8 @@ namespace VisualTemplate
                         fPath = replaceVariants(c, fPath);
                         fPath = mathOnDollar(fPath, c);
                         //c.CsvString += ";" + "\"" + sCh.FullPath + "\"" + ";Type;;Folder" + "\n";
-                        c.CsvString += ";" + "\"" + mathOnDollar(sCh.FullPath, c) + "\"" + ";Type;;Folder" + "\n";
-                        c.CsvString += ";" + "\"" + fPath + "\"" + ";Type;;Folder" + "\n";
+                        c.CsvString += ";" + "\"" + mathOnDollar(sCh.FullPath, c) + "\"" + ";Type;;Folder" + ";;;0" + "\n";
+                        c.CsvString += ";" + "\"" + fPath + "\"" + ";Type;;Folder" + ";;;0" + "\n";
                         //c.CsvString += ";" + "\"" + mathOnDollar(sCh.FullPath, c) + "\"" + ";Type;;Folder" + "\n";
                     }
 

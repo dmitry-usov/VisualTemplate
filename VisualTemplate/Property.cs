@@ -42,13 +42,15 @@ namespace VisualTemplate
         public string Description { get; set; }
         [JsonIgnore]
         public int imgCode { get; set; }
+        public string Segment { get; set; }
 
 
-        public Property(string id, string type, string value)
+        public Property(string id, string type, string value, string segment = "0")
         {
             Id = id;
             Type = type;
             Value = value;
+            Segment = segment;
         }
 
         
