@@ -45,6 +45,7 @@ namespace VisualTemplate
             //}
 
             richTextBox1.Text = p.Value;
+            rchSegment.Text = p.Segment;
 
         }
 
@@ -106,6 +107,7 @@ namespace VisualTemplate
             p.Id = cb_ids.SelectedItem.ToString();
             p.Type = cb_types.SelectedItem.ToString();
             p.Value = richTextBox1.Text;
+            p.Segment = rchSegment.Text;
             
         }
 

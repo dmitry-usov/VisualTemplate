@@ -16,6 +16,8 @@ namespace VisualTemplate
         public DataGridView dgProps { get; set; }
         public DataGridView dgSettings { get; set; }
         public DataGridView dgVariants { get; set; }
+        public DataGridView dgRowsView { get; set; }
+
         public Template Template { get; set; }
         public ArrayList Elements;
         public int Id { get; set; }
@@ -74,6 +76,16 @@ namespace VisualTemplate
             };
             sp_PropsNAddr.Panel2.Controls.Add(sp_LinksNVariants);
 
+            //Создание сплитконтейнера Для свойств и Для построчного отображения
+            SplitContainer sp_PropsNRows = new SplitContainer()
+            {
+                Orientation = Orientation.Horizontal,
+                Dock = DockStyle.Fill,
+                BorderStyle = BorderStyle.FixedSingle,
+                SplitterDistance = 35
+            };
+            sp_PropsNAddr.Panel1.Controls.Add(sp_PropsNRows);
+
             //Дерево
             TreeView = new TreeView()
             {
@@ -109,7 +121,7 @@ namespace VisualTemplate
                 BackgroundColor = Color.White,
                 ColumnHeadersVisible = true
             };
-            sp_PropsNAddr.Panel1.Controls.Add(dgProps);
+            sp_PropsNRows.Panel2.Controls.Add(dgProps);
 
             //Датагрид для добавления перменных
             dgVariants = new DataGridView()
@@ -127,7 +139,20 @@ namespace VisualTemplate
             };
             sp_LinksNVariants.Panel1.Controls.Add(dgVariants);
 
-
+            dgRowsView = new DataGridView()
+            {
+                Dock = DockStyle.Fill,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                AllowUserToResizeRows = false,
+                MultiSelect = false,
+                RowHeadersVisible = false,
+                ReadOnly = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                BackgroundColor = Color.White,
+                ColumnHeadersVisible = true
+            };
+            sp_PropsNRows.Panel1.Controls.Add(dgRowsView);
 
             Template = new Template(str);
         }

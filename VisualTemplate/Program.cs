@@ -109,6 +109,7 @@ namespace VisualTemplate
 
                 parentTreeNode = tr.Nodes.Add(TemplatesPages[tempId].Elements.Count.ToString(), temp.Name);
 
+
                 TemplatesPages[tempId].Elements.Add(temp);
 
                 temp.Elements.Sort();

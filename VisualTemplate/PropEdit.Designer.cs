@@ -40,6 +40,8 @@
             this.cb_CDTType = new System.Windows.Forms.ComboBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.rchSegment = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -160,11 +162,33 @@
             this.textBox2.Size = new System.Drawing.Size(237, 20);
             this.textBox2.TabIndex = 11;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 355);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(49, 13);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Segment";
+            // 
+            // rchSegment
+            // 
+            this.rchSegment.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rchSegment.Location = new System.Drawing.Point(65, 352);
+            this.rchSegment.Name = "rchSegment";
+            this.rchSegment.Size = new System.Drawing.Size(88, 21);
+            this.rchSegment.TabIndex = 13;
+            this.rchSegment.Text = "";
+            // 
             // PropEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(470, 381);
+            this.Controls.Add(this.rchSegment);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.cb_CDTType);
@@ -200,5 +224,7 @@
         private System.Windows.Forms.ComboBox cb_CDTType;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.RichTextBox rchSegment;
     }
 }
